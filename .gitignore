@@ -1,0 +1,7 @@
+/venv/
+/__pycache__/
+/Airplanes_Annotations/
+/Images/
+/.idea/
+/train_images.cache
+/train_labels.cache
