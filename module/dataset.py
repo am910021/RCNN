@@ -203,7 +203,7 @@ class Dataset:
 
             #判斷是否需要合並「增強學習的程式」的資料
             if len(self.config.IMAGE_ENHANCE_FILE) > 1:
-                self.__trainDataset = self.combine_gen(temp_train)
+                self.__trainDataset = self.combine_gen(iter(temp_train))
             else:
                 self.__trainDataset = temp_train[0]
 
