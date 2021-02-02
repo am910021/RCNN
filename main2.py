@@ -7,46 +7,23 @@ import os, gc
 gc.collect()
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 from config import Config
-from module.dataset import Dataset
-from datetime import datetime
+from module.datasethelper import DatasetHelper
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 from module.modelhelper import ModelHelper
-
+from module.callbackhalper import CallbackHelper
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     config = Config()
+    callback = CallbackHelper(config)
     model = ModelHelper(config)
     #model.load_h5_model()
     model.create_model()
-    dataset = Dataset(config)
-    dataset.createTrainImageGenerate()
-    traindata = dataset.getTrainDataset()
-    testdata = dataset.getTestDateset()
-
-    now = datetime.now()
-    current_time = now.strftime("/%Y%m%d%H%M%S/")
-
-    checkpoint = ModelCheckpoint(
-        config.CHECKPOINT_PATH + "/" + config.CNN_MODEL_FILE + current_time + config.CHECKPOINT_MODEL,
-        monitor='val_loss',
-        verbose=1,
-        save_best_only=True,
-        save_weights_only=False,
-        mode='auto',
-        period=config.SAVE_PERIOD)
-
-    checkpoint2 = ModelCheckpoint(
-        config.CHECKPOINT_PATH + "/" + config.CNN_MODEL_FILE + current_time + config.CHECKPOINT_WEIGHTS + '.{epoch:05d}',
-        monitor='val_loss',
-        verbose=1,
-        save_best_only=True,
-        save_weights_only=True,
-        mode='auto',
-        period=config.SAVE_PERIOD)
-
-    early = EarlyStopping(monitor='val_loss', min_delta=0, patience=config.PATIENCE, verbose=1, mode='auto')
+    dataset = DatasetHelper(config)
+    dataset.create_train_image_generate()
+    traindata = dataset.get_train_dataset()
+    testdata = dataset.get_test_dateset()
 
     hist = model.get_model().fit(
         traindata,
@@ -55,4 +32,4 @@ if __name__ == '__main__':
         epochs=config.MAX_EPOCHS,
         validation_data=testdata,
         validation_steps=2,
-        callbacks=[checkpoint, checkpoint2, early])
+        callbacks=callback.get_callbacks())

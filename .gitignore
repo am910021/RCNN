@@ -5,3 +5,5 @@
 /.idea/
 /train_images.cache
 /train_labels.cache
+*.h5
+/checkpoint/

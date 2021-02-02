@@ -31,9 +31,9 @@ class MyLabelBinarizer(LabelBinarizer):
             return super().inverse_transform(Y, threshold)
 
 
-class Dataset:
+class DatasetHelper:
     # 讀取資料集 資料前處理
-    def loadDataset(self, saveCache=True):
+    def load_origin_data(self, saveCache=True):
         annot_list = os.listdir(self.config.ANNOT)
         total_amount = len(annot_list)
         print("Loading dataset.")
@@ -116,7 +116,7 @@ class Dataset:
             sys.stdout.flush()
         print()
 
-    def loadCacheOrLoadDataset(self):
+    def load_cache_Or_load_data(self):
         if (self.config.LOAD_CACHE_DATASET
                 and os.path.exists(self.config.DATASET_IMAGES_CACHE_NAME)
                 and os.path.exists(self.config.DATASET_LABELS_CACHE_NAME)):
@@ -145,15 +145,15 @@ class Dataset:
             if (not loaded):
                 sys.stdout.write("\rDetected dataset cache broken, reload dataset.")
                 sys.stdout.flush()
-                self.loadDataset()
+                self.load_origin_data()
             else:
                 sys.stdout.write("\rLoad dataset cache complete. ")
                 sys.stdout.flush()
         else:
-            self.loadDataset()
+            self.load_origin_data()
         print()
 
-    def createTrainImageGenerate(self):
+    def create_train_image_generate(self):
         temp_train = []
         raw_events = itertools.chain()
 
@@ -201,17 +201,17 @@ class Dataset:
             sys.stdout.flush()
             print()
 
-    def getTrainDataset(self):
+    def get_train_dataset(self):
         return self.__trainDataset
 
-    def getTestDateset(self):
+    def get_test_dateset(self):
         return self.__testDataset
 
     def reload(self):
         self.train_images = []
         self.train_labels = []
-        self.loadDataset()
-        self.createTrainImageGenerate()
+        self.load_origin_data()
+        self.create_train_image_generate()
 
     def __init__(self, config: Config):
         self.config = config
@@ -223,6 +223,6 @@ class Dataset:
         self.ss = cv2.ximgproc.segmentation.createSelectiveSearchSegmentation()
         self.train_images = []
         self.train_labels = []
-        self.loadCacheOrLoadDataset()
+        self.load_cache_Or_load_data()
         self.__trainDataset = itertools.chain()
         self.__testDataset = itertools.chain()

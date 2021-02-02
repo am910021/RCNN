@@ -5,18 +5,26 @@
 
 
 class Config:
-    IMG_WIDTH = 224
-    IMG_HEIGHT = 224
-    IMG_CHANNEL = 3
+    IMG_WIDTH = 224  # 設定圖片寬
+    IMG_HEIGHT = 224  # 設定圖片長
+    IMG_CHANNEL = 3  # 設定圖片通道數
     CLASSIFICATION = 2  # 分類器數量
 
-    TEST_DATASET_SIZE = 20  #測式集大小 0~100
-    IMAGE_ENHANCE_FILE = ['rotation45','rotation90'] #設定增強學習的程式 位置 module/enhance/XXX.py origin=原始數據 rotation45=加入轉45角的資料
-    CNN_MODEL_FILE = 'InceptionResNetV2'  # 設定CNN模型的位置 module/model/XXX.py
+    TEST_DATASET_SIZE = 20  # 測式集大小 0~100
 
-    ENABLE_LOAD_CHECKPOINT_MODEL = False  #載入儲存點
-    LOAD_CHECKPOINT_H5_FILE = 'checkpoint2/full.02971.h5' # 載入儲存點位置(h5檔)
-    LOAD_CHECKPOINT_WEIGHT = 'checkpoint2/xxx' # 載入儲存點位置(weight)
+    # 設定增強學習的程式 位置 module/enhance/XXX.py origin=原始數據 rotation45=加入轉45角的資料
+    IMAGE_ENHANCE_FILE = ['rotation45',
+                          'rotation90']
+
+    # 設定CNN模型的位置 module/model/XXX.py
+    CNN_MODEL_FILE = 'InceptionResNetV2'
+
+    # 設定callback存檔點 位置module/callback/xxx.py checkpointone=儲存模型+權重 checkpointtwo=儲存權重 earlystop=未收練結束訓練
+    CNN_TRAIN_CALLBACK = ['checkpointone', 'checkpointtwo', 'earlystop']
+
+    ENABLE_LOAD_CHECKPOINT_MODEL = False  # 載入儲存點
+    LOAD_CHECKPOINT_H5_FILE = 'model.h5'  # 載入儲存點位置(h5檔)
+    LOAD_CHECKPOINT_WEIGHT = 'checkpoint2/xxx'  # 載入儲存點位置(weight)
 
     ENABLE_GPU_ACCELERATE = True  # 使用gpu加速學習
     USE_GPU_LIST = ['/device:GPU:0', '/device:GPU:1']  # 設定GPU 全部=[]  單一GPU=['/device:GPU:0']
@@ -31,14 +39,14 @@ class Config:
     CPU_THREAD = 6  # CPU線程數
     LOAD_CACHE_DATASET = True  # 使用快取資料 True=載入快取資料集 False=重新載入資料集
 
-    PATH = "Images" #資料集的原始圖片
-    ANNOT = "Airplanes_Annotations" #資料集的標記
+    PATH = "Images"  # 資料集的原始圖片位置
+    ANNOT = "Airplanes_Annotations"  # 資料集的標記檔位置
     FILE_PREFIXES = "airplane"
-    DATASET_IMAGES_CACHE_NAME = "train_images.cache" #快取檔案名稱
-    DATASET_LABELS_CACHE_NAME = "train_labels.cache"  #快取檔案名稱
+    DATASET_IMAGES_CACHE_NAME = "train_images.cache"  # 快取檔案名稱
+    DATASET_LABELS_CACHE_NAME = "train_labels.cache"  # 快取檔案名稱
 
-    CHECKPOINT_PATH = "./checkpoint" #檢查點位置
-    CHECKPOINT_MODEL = "model.h5" #檢查點檔案名稱 檢查點包含模型與權重
-    CHECKPOINT_WEIGHTS = "weight" ##檢查點權重名稱
+    CHECKPOINT_PATH = "./checkpoint"  # 檢查點位置
+    CHECKPOINT_MODEL = "model.h5"  # 檢查點檔案名稱 檢查點包含模型與權重
+    CHECKPOINT_WEIGHTS = "weight"  ##檢查點權重名稱
 
-    ENABLE_OPENCV_OPTIMIZED = True #啟用opencv優化
+    ENABLE_OPENCV_OPTIMIZED = True  # 啟用opencv優化
