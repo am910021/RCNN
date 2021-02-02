@@ -7,6 +7,7 @@ import argparse
 class Config:
 
     def __create_new_config(self, name) -> bool:
+        name = name.replace(".cfg.ini", "")
         if not path.exists(name + ".cfg.ini"):
             f = open("module/config.default", "r")
             tmp = f.read()
@@ -42,16 +43,10 @@ class Config:
         default = 'default.cfg.ini'
         file = default
         if (config_file is None or not path.exists(config_file)) and not path.exists(default):
-            f = open("module/config.default", "r")
-            tmp = f.read()
-            f.close()
-
-            f = open(default, "w")
-            f.write(tmp)
-            f.close()
             print("Oops, can't find any config file.")
-            print("Default config file '%s' create." % default)
-            print("Loading config file from '%s' ." % default)
+            self.__create_new_config(default)
+            print('Please re-start program and choose new config file.')
+            sys.exit()
         elif config_file and path.exists(config_file):
             file = config_file
             print("Loading config file from '%s' ." % config_file)
