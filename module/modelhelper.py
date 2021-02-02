@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from config import Config
+from module.config import Config
 from tensorflow.python.keras.engine.functional import Functional
 import tensorflow as tf
 import importlib

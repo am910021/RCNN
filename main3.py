@@ -6,9 +6,8 @@
 import os, gc
 gc.collect()
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-from config import Config
+from module.config import Config
 from module.datasethelper import DatasetHelper
-from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 from module.modelhelper import ModelHelper
 from module.callbackhalper import CallbackHelper
 

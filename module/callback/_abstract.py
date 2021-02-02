@@ -1,4 +1,4 @@
-from config import Config
+from module.config import Config
 from datetime import datetime
 from keras.callbacks import Callback
 

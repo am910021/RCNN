@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow.python.keras.engine.functional import Functional
 from tensorflow.keras.optimizers import Adam
-from config import Config
+from module.config import Config
 from module.model._interface import NetModelInterface
 
 

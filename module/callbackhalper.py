@@ -1,4 +1,4 @@
-from config import Config
+from module.config import Config
 import sys, importlib
 
 

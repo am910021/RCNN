@@ -1,5 +1,5 @@
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from config import Config
+from module.config import Config
 from tensorflow.python.keras.preprocessing.image import NumpyArrayIterator
 
 

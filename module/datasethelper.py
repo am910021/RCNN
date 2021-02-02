@@ -3,7 +3,7 @@
 
 
 import os, sys, cv2
-from config import Config
+from module.config import Config
 import pickle
 import hashlib
 import pandas as pd

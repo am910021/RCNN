@@ -1,0 +1,86 @@
+[GENERAL]
+;設定圖片寬
+img_width = 224
+
+;設定圖片長
+img_height = 224
+
+;設定圖片通道數
+img_channel = 3
+
+;分類器數量
+classification = 2
+
+;設定cnn模型的位置 module/model/xxx.py
+cnn_model_file = "inceptionresnetv2"
+
+;設定callback存檔點 位置module/callback/xxx.py checkpointone=儲存模型與權重 checkpointtwo=只儲存權重 earlystop=未收練結束訓練
+cnn_train_callback = "checkpointone, checkpointtwo, earlystop"
+
+;使用gpu加速學習
+enable_gpu_accelerate = true
+
+;設定gpu  全部=""  單一gpu="/device:gpu:0"
+use_gpu_list = "/device:gpu:0,  /device:gpu:1"
+
+;最大回合數(epoch)
+max_epochs = 10000
+batch_size = 16
+steps_per_epoch = 10
+save_period = 1
+
+;能夠容忍多少個回合(epoch)內都沒有收練(improvement)
+patience = 1000
+
+;學習率
+learning_rate = 0.0001
+
+
+[DATASET]
+;快取檔案名稱
+dataset_images_cache_name = "train_images.cache"
+
+;快取檔案名稱
+dataset_labels_cache_name = "train_labels.cache"
+
+;測式集大小 0~100
+test_dataset_size = 20
+
+;使用快取資料 true=載入快取資料集 false=重新載入資料集
+load_cache_dataset = true
+
+;資料集的原始圖片位置
+path = "images"
+
+;資料集的標記檔位置
+annot = "airplanes_annotations"
+file_prefixes = "airplane"
+
+[CHECKPOINT]
+;檢查點位置
+checkpoint_path = "./checkpoint"
+
+;檢查點檔案名稱 檢查點包含模型與權重
+checkpoint_model = "model.h5"
+
+;檢查點權重名稱
+checkpoint_weights = "weight"
+
+;是否載入儲存點
+enable_load_checkpoint_model = false
+
+;載入儲存點路徑+名稱(h5檔)
+load_checkpoint_h5_file = "model.h5"
+
+;載入儲存點路徑+名稱(weight)
+load_checkpoint_weight = "checkpoint2/xxx"
+
+;設定增強學習的程式 位置 module/enhance/xxx.py origin=原始數據 rotation45=加入轉45角的資料
+image_enhance_file = "rotation45, rotation90"
+
+[OTHER]
+;啟用opencv優化
+enable_opencv_optimized = true
+
+;cpu線程數
+cpu_thread = 6

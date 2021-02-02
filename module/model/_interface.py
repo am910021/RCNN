@@ -1,5 +1,5 @@
 from tensorflow.python.keras.engine.functional import Functional
-from config import Config
+from module.config import Config
 
 
 class NetModelInterface:

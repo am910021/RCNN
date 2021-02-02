@@ -7,3 +7,4 @@
 /train_labels.cache
 *.h5
 /checkpoint/
+*.cfg.ini
