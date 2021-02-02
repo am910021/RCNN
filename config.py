@@ -1,7 +1,5 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
+import sys
+from os import path
 
 
 class Config:
@@ -50,3 +48,53 @@ class Config:
     CHECKPOINT_WEIGHTS = "weight"  ##檢查點權重名稱
 
     ENABLE_OPENCV_OPTIMIZED = True  # 啟用opencv優化
+
+    def __init__(self):
+        sys.stdout.write("\rConfig file Initializing.")
+        sys.stdout.flush()
+
+        # 判斷是否有設定「增強學習的程式」
+        if len(Config.IMAGE_ENHANCE_FILE) == 0:
+            print("Please configure IMAGE_ENHANCE_FILE, then restart program.")
+            print("Process  terminated.")
+            sys.exit()
+
+        for file in Config.IMAGE_ENHANCE_FILE:
+            if not path.exists('module/enhance/' + file + '.py'):
+                print("Please check module/enhance/%s.py file exists or re-configure IMAGE_ENHANCE_FILE." % file)
+                print("Process  terminated.")
+                sys.exit()
+
+        if not path.exists('module/model/' + Config.CNN_MODEL_FILE + '.py'):
+            print(
+                "Please check module/model/%s.py file exists or re-configure CNN_MODEL_FILE." % Config.CNN_MODEL_FILE)
+            print("Process  terminated.")
+            sys.exit()
+
+        if len(Config.CNN_TRAIN_CALLBACK) == 0:
+            print("Please configure CNN_TRAIN_CALLBACK, then restart program.")
+            print("Process  terminated.")
+            sys.exit()
+
+        for file in Config.CNN_TRAIN_CALLBACK:
+            if not path.exists('module/callback/' + file + '.py'):
+                print("Please check module/callback/%s.py file exists or re-configure CNN_TRAIN_CALLBACK." % file)
+                print("Process  terminated.")
+                sys.exit()
+
+        if Config.ENABLE_LOAD_CHECKPOINT_MODEL:
+            if not path.exists(Config.LOAD_CHECKPOINT_H5_FILE):
+                print(
+                    "Please check %s file exists or re-configure LOAD_CHECKPOINT_H5_FILE." % Config.LOAD_CHECKPOINT_H5_FILE)
+                print("Process  terminated.")
+                sys.exit()
+
+            if not path.exists(Config.LOAD_CHECKPOINT_WEIGHT):
+                print(
+                    "Please check %s file exists or re-configure LOAD_CHECKPOINT_WEIGHT." % Config.LOAD_CHECKPOINT_WEIGHT)
+                print("Process  terminated.")
+                sys.exit()
+
+        sys.stdout.write("\rConfig file check success.")
+        sys.stdout.flush()
+        print()

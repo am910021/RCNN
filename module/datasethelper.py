@@ -170,12 +170,6 @@ class DatasetHelper:
         self.__testDataset = itertools.chain(self.__testDataset,
                                              originn_gen.flow(x=x_test, y=y_test, batch_size=self.config.BATCH_SIZE))
 
-        # 判斷是否有設定「增強學習的程式」
-        if len(self.config.IMAGE_ENHANCE_FILE) == 0:
-            print("Please config IMAGE_ENHANCE_FILE, then restart program.")
-            print("Process  terminated.")
-            sys.exit()
-
         # 讀設所有「增強學習的程式」，並執行
         for t in self.config.IMAGE_ENHANCE_FILE:
             sys.stdout.write("\rCreating %s enhance image dataset." % t)

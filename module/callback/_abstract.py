@@ -9,7 +9,7 @@ class TrainCallbackAbstract:
 
     def get_time_path(self) -> str:
         now = datetime.now()
-        return now.strftime("/%Y%m%d%H%M%S/")
+        return now.strftime("/%Y-%m-%d-%H-%M-%S/")
 
     def create_callback(self) -> Callback:
         pass

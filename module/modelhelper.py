@@ -37,6 +37,9 @@ class ModelHelper:
 
     def create_model(self, printSummary=False):
 
+        sys.stdout.write("\rCreating model from %s ." % self.config.CNN_MODEL_FILE)
+        sys.stdout.flush()
+
         # 讀取CNN類別
         NetModel = None
         try:
@@ -67,6 +70,9 @@ class ModelHelper:
             print("Process  terminated.")
             sys.exit()
 
+        sys.stdout.write("\rLoading saved model from %s ." % self.config.LOAD_CHECKPOINT_H5_FILE)
+        sys.stdout.flush()
+
         # 指定運算設備
         mirrored_strategy = tf.distribute.MirroredStrategy(devices=self.__get_final_devices())
         with mirrored_strategy.scope():
@@ -87,6 +93,9 @@ class ModelHelper:
             print("Process  terminated.")
             sys.exit()
 
+        sys.stdout.write("\rLoading saved weights from %s ." % self.config.LOAD_CHECKPOINT_WEIGHT)
+        sys.stdout.flush()
+
         # 指定運算設備
         mirrored_strategy = tf.distribute.MirroredStrategy(devices=self.__get_final_devices())
         with mirrored_strategy.scope():
@@ -100,7 +109,7 @@ class ModelHelper:
 
             if printSummary:
                 self.model_final.summary()
-        print('From ' + self.config.LOAD_CHECKPOINT_H5_FILE + ' load weight success.')
+        print('From ' + self.config.LOAD_CHECKPOINT_H5_FILE + ' load weights success.')
         time.sleep(5)
 
     def get_model(self) -> Functional:
