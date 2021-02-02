@@ -13,6 +13,7 @@ from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
 import numpy as np
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import itertools
 
 
 class MyLabelBinarizer(LabelBinarizer):
@@ -31,11 +32,6 @@ class MyLabelBinarizer(LabelBinarizer):
 
 
 class Dataset:
-    def combine_gen(self, *gens):
-        while True:
-            for g in gens:
-                yield next(g)
-
     # 讀取資料集 資料前處理
     def loadDataset(self, saveCache=True):
         annot_list = os.listdir(self.config.ANNOT)
@@ -159,8 +155,9 @@ class Dataset:
 
     def createTrainImageGenerate(self):
         temp_train = []
+        raw_events = itertools.chain()
 
-        #分割原始資料集 訓練集 測式集
+        # 分割原始資料集 訓練集 測式集
         lenc = MyLabelBinarizer()
         x_train, x_test, y_train, y_test = train_test_split(
             np.array(self.train_images),
@@ -168,22 +165,23 @@ class Dataset:
             test_size=self.config.TEST_DATASET_SIZE / 100
         )
 
-        #產生測式集資料
+        # 產生測式集資料
         originn_gen = ImageDataGenerator()
-        self.__testDataset = originn_gen.flow(x=x_test, y=y_test, batch_size=self.config.BATCH_SIZE)
+        self.__testDataset = itertools.chain(self.__testDataset,
+                                             originn_gen.flow(x=x_test, y=y_test, batch_size=self.config.BATCH_SIZE))
 
-        #判斷是否有設定「增強學習的程式」
+        # 判斷是否有設定「增強學習的程式」
         if len(self.config.IMAGE_ENHANCE_FILE) == 0:
             print("Please config IMAGE_ENHANCE_FILE, then restart program.")
             print("Process  terminated.")
             sys.exit()
 
-        #讀設所有「增強學習的程式」，並執行
+        # 讀設所有「增強學習的程式」，並執行
         for t in self.config.IMAGE_ENHANCE_FILE:
             sys.stdout.write("\rCreating %s enhance image dataset." % t)
             sys.stdout.flush()
 
-            #從文字import類別
+            # 從文字import類別
             ImageEnhance = None
             try:
                 imp = importlib.import_module("module.enhance." + t)
@@ -193,20 +191,15 @@ class Dataset:
                 print("Process  terminated.")
                 sys.exit()
 
-            #產生「增強學習的程式」的實例
+            # 產生「增強學習的程式」的實例
             imageGenerate = ImageEnhance(self.config)
-            temp_train.append(imageGenerate.createEnhanceTrain(x_train, y_train))
+            # temp_train.append(imageGenerate.createEnhanceTrain(x_train, y_train))
+            self.__trainDataset = itertools.chain(self.__trainDataset,
+                                                  imageGenerate.createEnhanceTrain(x_train, y_train))
 
-            sys.stdout.write("\rEnhance %s image dataset Created ." % t)
+            sys.stdout.write("\rEnhance %s image dataset created ." % t)
             sys.stdout.flush()
             print()
-
-            #判斷是否需要合並「增強學習的程式」的資料
-            if len(self.config.IMAGE_ENHANCE_FILE) > 1:
-                self.__trainDataset = self.combine_gen(iter(temp_train))
-            else:
-                self.__trainDataset = temp_train[0]
-
 
     def getTrainDataset(self):
         return self.__trainDataset
@@ -231,5 +224,5 @@ class Dataset:
         self.train_images = []
         self.train_labels = []
         self.loadCacheOrLoadDataset()
-        self.__trainDataset = None
-        self.__testDataset = None
+        self.__trainDataset = itertools.chain()
+        self.__testDataset = itertools.chain()

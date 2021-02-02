@@ -11,7 +11,7 @@ class Config:
     CLASSIFICATION = 2  # 分類器數量
 
     TEST_DATASET_SIZE = 20  #測式集大小 0~100
-    IMAGE_ENHANCE_FILE = ['origin','origin'] #設定增強學習的程式 位置 module/enhance/XXX.py origin=原始數據 rotation45=加入轉45角的資料
+    IMAGE_ENHANCE_FILE = ['rotation45','rotation90'] #設定增強學習的程式 位置 module/enhance/XXX.py origin=原始數據 rotation45=加入轉45角的資料
     CNN_MODEL_FILE = 'InceptionResNetV2'  # 設定CNN模型的位置 module/model/XXX.py
 
     ENABLE_LOAD_CHECKPOINT_MODEL = False  #載入儲存點
