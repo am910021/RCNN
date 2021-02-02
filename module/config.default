@@ -12,7 +12,7 @@ img_channel = 3
 classification = 2
 
 ;設定cnn模型的位置 module/model/xxx.py
-cnn_model_file = "inceptionresnetv2"
+cnn_model_file = "InceptionResNetV2"
 
 ;設定callback存檔點 位置module/callback/xxx.py checkpointone=儲存模型與權重 checkpointtwo=只儲存權重 earlystop=未收練結束訓練
 cnn_train_callback = "checkpointone, checkpointtwo, earlystop"

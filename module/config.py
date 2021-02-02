@@ -107,49 +107,51 @@ class Config:
             print(ex)
             sys.exit()
 
+        self.check_config_file()
+
     def check_config_file(self):
         sys.stdout.write("\rConfig file Initializing.")
         sys.stdout.flush()
 
         # 判斷是否有設定「增強學習的程式」
-        if len(Config.IMAGE_ENHANCE_FILE) == 0:
+        if len(self.IMAGE_ENHANCE_FILE) == 0:
             print("Please configure IMAGE_ENHANCE_FILE, then restart program.")
             print("Process  terminated.")
             sys.exit()
 
-        for file in Config.IMAGE_ENHANCE_FILE:
+        for file in self.IMAGE_ENHANCE_FILE:
             if not path.exists('module/enhance/' + file + '.py'):
                 print("Please check module/enhance/%s.py file exists or re-configure IMAGE_ENHANCE_FILE." % file)
                 print("Process  terminated.")
                 sys.exit()
 
-        if not path.exists('module/model/' + Config.CNN_MODEL_FILE + '.py'):
+        if not path.exists('module/model/' + self.CNN_MODEL_FILE + '.py'):
             print(
-                "Please check module/model/%s.py file exists or re-configure CNN_MODEL_FILE." % Config.CNN_MODEL_FILE)
+                "Please check module/model/%s.py file exists or re-configure CNN_MODEL_FILE." % self.CNN_MODEL_FILE)
             print("Process  terminated.")
             sys.exit()
 
-        if len(Config.CNN_TRAIN_CALLBACK) == 0:
+        if len(self.CNN_TRAIN_CALLBACK) == 0:
             print("Please configure CNN_TRAIN_CALLBACK, then restart program.")
             print("Process  terminated.")
             sys.exit()
 
-        for file in Config.CNN_TRAIN_CALLBACK:
+        for file in self.CNN_TRAIN_CALLBACK:
             if not path.exists('module/callback/' + file + '.py'):
                 print("Please check module/callback/%s.py file exists or re-configure CNN_TRAIN_CALLBACK." % file)
                 print("Process  terminated.")
                 sys.exit()
 
-        if Config.ENABLE_LOAD_CHECKPOINT_MODEL:
-            if not path.exists(Config.LOAD_CHECKPOINT_H5_FILE):
+        if self.ENABLE_LOAD_CHECKPOINT_MODEL:
+            if not path.exists(self.LOAD_CHECKPOINT_H5_FILE):
                 print(
-                    "Please check %s file exists or re-configure LOAD_CHECKPOINT_H5_FILE." % Config.LOAD_CHECKPOINT_H5_FILE)
+                    "Please check %s file exists or re-configure LOAD_CHECKPOINT_H5_FILE." % self.LOAD_CHECKPOINT_H5_FILE)
                 print("Process  terminated.")
                 sys.exit()
 
-            if not path.exists(Config.LOAD_CHECKPOINT_WEIGHT):
+            if not path.exists(self.LOAD_CHECKPOINT_WEIGHT):
                 print(
-                    "Please check %s file exists or re-configure LOAD_CHECKPOINT_WEIGHT." % Config.LOAD_CHECKPOINT_WEIGHT)
+                    "Please check %s file exists or re-configure LOAD_CHECKPOINT_WEIGHT." % self.LOAD_CHECKPOINT_WEIGHT)
                 print("Process  terminated.")
                 sys.exit()
 

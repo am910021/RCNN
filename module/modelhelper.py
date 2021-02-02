@@ -66,7 +66,7 @@ class ModelHelper:
 
     def load_h5_model(self, printSummary=False):
         if not path.exists(self.config.LOAD_CHECKPOINT_H5_FILE):
-            print("Unable to load the checkpoint model at" + self.config.LOAD_CHECKPOINT_H5_FILE)
+            print("Unable to load the checkpoint model at " + self.config.LOAD_CHECKPOINT_H5_FILE)
             print("Process  terminated.")
             sys.exit()
 
