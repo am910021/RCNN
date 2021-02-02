@@ -61,6 +61,7 @@ class ModelHelper:
             self.model_final.compile(loss=tf.keras.losses.categorical_crossentropy, optimizer=opt, metrics=["accuracy"])
             if printSummary:
                 self.model_final.summary()
+        print()
         print('From ' + self.config.CNN_MODEL_FILE + ' create model success.')
         time.sleep(5)
 
