@@ -2,6 +2,7 @@ import sys
 from os import path
 from configparser import ConfigParser, ExtendedInterpolation
 import argparse
+from datetime import datetime
 
 
 class Config:
@@ -101,6 +102,10 @@ class Config:
 
             self.ENABLE_OPENCV_OPTIMIZED = config['OTHER']['enable_opencv_optimized'].upper() == "TRUE"
             self.CPU_THREAD = int(config['OTHER']['cpu_thread'])
+
+            now = datetime.now()
+            self.TIME_PATH = now.strftime("/%Y-%m-%d-%H-%M-%S/")
+
         except Exception as ex:
             print(ex)
             sys.exit()

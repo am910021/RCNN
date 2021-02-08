@@ -1,5 +1,4 @@
 from module.config import Config
-from datetime import datetime
 from keras.callbacks import Callback
 
 
@@ -8,8 +7,7 @@ class TrainCallbackAbstract:
         self.config = config
 
     def get_time_path(self) -> str:
-        now = datetime.now()
-        return now.strftime("/%Y-%m-%d-%H-%M-%S/")
+        return self.config.TIME_PATH
 
     def create_callback(self) -> Callback:
         pass

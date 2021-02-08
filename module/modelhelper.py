@@ -11,6 +11,7 @@ from os import path
 from module.color import bcolors
 from module.datasethelper import DatasetHelper
 from module.callbackhalper import CallbackHelper
+import matplotlib.pyplot as plt
 
 
 class ModelHelper:
@@ -94,7 +95,7 @@ class ModelHelper:
             self.__create_model()
 
     def run_train_cnn(self, dataset: DatasetHelper, callback: CallbackHelper):
-        self.model_final.fit(
+        hist = self.model_final.fit(
             dataset.get_train_dataset(),
             batch_size=self.config.BATCH_SIZE,
             steps_per_epoch=self.config.STEPS_PER_EPOCH,
@@ -102,3 +103,13 @@ class ModelHelper:
             validation_data=dataset.get_test_dateset(),
             validation_steps=2,
             callbacks=callback.get_callbacks())
+
+        plt.plot(hist.history['loss'])
+        plt.plot(hist.history['val_loss'])
+        plt.title("model loss")
+        plt.ylabel("Loss")
+        plt.xlabel("Epoch")
+        plt.legend(["Loss", "Validation Loss"])
+        plt.savefig(
+            self.config.CHECKPOINT_PATH + "/" + self.config.CNN_MODEL_FILE + self.config.TIME_PATH + 'chart loss.png')
+        print("train end, loss chart save in " + self.config.CHECKPOINT_PATH + "/" + self.config.CNN_MODEL_FILE + self.config.TIME_PATH + 'chart loss.png')
