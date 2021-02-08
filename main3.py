@@ -17,7 +17,7 @@ if __name__ == '__main__':
     config = Config()
     callback = CallbackHelper(config)
     model = ModelHelper(config)
-    model.load_h5_model()
+    #model.load_h5_model()
     #model.create_model()
     dataset = DatasetHelper(config)
     dataset.create_train_image_generate()

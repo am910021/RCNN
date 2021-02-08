@@ -17,6 +17,7 @@ class ModelHelper:
     def __init__(self, config: Config):
         self.config = config
         self.model_final = None
+        self.__init_model()
 
     def __get_available_gpus(self):
         local_device_protos = device_lib.list_local_devices()
@@ -35,7 +36,7 @@ class ModelHelper:
         time.sleep(5)
         return devices
 
-    def create_model(self, printSummary=False):
+    def __create_model(self, printSummary=False):
 
         sys.stdout.write("\rCreating model from %s ." % self.config.CNN_MODEL_FILE)
         sys.stdout.flush()
@@ -65,7 +66,7 @@ class ModelHelper:
         print('From ' + self.config.CNN_MODEL_FILE + ' create model success.')
         time.sleep(5)
 
-    def load_h5_model(self, printSummary=False):
+    def __load_h5_model(self, printSummary=False):
         if not path.exists(self.config.LOAD_CHECKPOINT_H5_FILE):
             print("Unable to load the checkpoint model at " + self.config.LOAD_CHECKPOINT_H5_FILE)
             print("Process  terminated.")
@@ -80,49 +81,17 @@ class ModelHelper:
             self.model_final = tf.keras.models.load_model(self.config.LOAD_CHECKPOINT_H5_FILE)
             if printSummary:
                 self.model_final.summary()
-        print('From ' + self.config.LOAD_CHECKPOINT_H5_FILE + ' load model success.')
-        time.sleep(5)
-
-    def load_weight(self, printSummary=False):
-        if self.model_final is None:
-            print("The model cannot be created or loaded, please check the program.")
-            print("Process  terminated.")
-            sys.exit()
-
-        if not path.exists(self.config.LOAD_CHECKPOINT_WEIGHT):
-            print("Unable to load the checkpoint weight at" + self.config.LOAD_CHECKPOINT_WEIGHT)
-            print("Process  terminated.")
-            sys.exit()
-
-        sys.stdout.write("\rLoading saved weights from %s ." % self.config.LOAD_CHECKPOINT_WEIGHT)
-        sys.stdout.flush()
-
-        # 指定運算設備
-        mirrored_strategy = tf.distribute.MirroredStrategy(devices=self.__get_final_devices())
-        with mirrored_strategy.scope():
-
-            try:
-                self.model_final.load_weights(self.config.LOAD_CHECKPOINT_WEIGHT)
-            except Exception as ex:
-                print(self.config.LOAD_CHECKPOINT_WEIGHT + " not compatible with the current model.")
-                print("Process  terminated.")
-                sys.exit()
-
-            if printSummary:
-                self.model_final.summary()
-        print('From ' + self.config.LOAD_CHECKPOINT_H5_FILE + ' load weights success.')
+        print('\rFrom ' + self.config.LOAD_CHECKPOINT_H5_FILE + ' load model success.')
         time.sleep(5)
 
     def get_model(self) -> Functional:
-        if self.config.ENABLE_LOAD_CHECKPOINT_H5:
-            self.load_h5_model()
-        else:
-            self.create_model()
-
-        if self.config.ENABLE_LOAD_CHECKPOINT_WEIGHT:
-            self.load_weight()
-
         return self.model_final
+
+    def __init_model(self):
+        if self.config.ENABLE_LOAD_CHECKPOINT_H5:
+            self.__load_h5_model()
+        else:
+            self.__create_model()
 
     def run_train_cnn(self, dataset: DatasetHelper, callback: CallbackHelper):
         self.model_final.fit(
