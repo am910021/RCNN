@@ -114,6 +114,14 @@ class ModelHelper:
         time.sleep(5)
 
     def get_model(self) -> Functional:
+        if self.config.ENABLE_LOAD_CHECKPOINT_H5:
+            self.load_h5_model()
+        else:
+            self.create_model()
+
+        if self.config.ENABLE_LOAD_CHECKPOINT_WEIGHT:
+            self.load_weight()
+
         return self.model_final
 
     def run_train_cnn(self, dataset: DatasetHelper, callback: CallbackHelper):

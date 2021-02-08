@@ -92,7 +92,8 @@ class Config:
                 = config['CHECKPOINT']['checkpoint_model'].replace('"', '').replace("'", '').replace(" ", '')
             self.CHECKPOINT_WEIGHTS \
                 = config['CHECKPOINT']['checkpoint_weights'].replace('"', '').replace("'", '').replace(" ", '')
-            self.ENABLE_LOAD_CHECKPOINT_MODEL = config['CHECKPOINT']['enable_load_checkpoint_model'].upper() == "TRUE"
+            self.ENABLE_LOAD_CHECKPOINT_H5 = config['CHECKPOINT']['enable_load_checkpoint_h5'].upper() == "TRUE"
+            self.ENABLE_LOAD_CHECKPOINT_WEIGHT = config['CHECKPOINT']['enable_load_checkpoint_weight'].upper() == "TRUE"
             self.LOAD_CHECKPOINT_H5_FILE \
                 = config['CHECKPOINT']['load_checkpoint_h5_file'].replace('"', '').replace("'", '').replace(" ", '')
             self.LOAD_CHECKPOINT_WEIGHT \
@@ -142,13 +143,14 @@ class Config:
                 print("Process  terminated.")
                 sys.exit()
 
-        if self.ENABLE_LOAD_CHECKPOINT_MODEL:
+        if self.ENABLE_LOAD_CHECKPOINT_H5:
             if not path.exists(self.LOAD_CHECKPOINT_H5_FILE):
                 print(
                     "Please check %s file exists or re-configure LOAD_CHECKPOINT_H5_FILE." % self.LOAD_CHECKPOINT_H5_FILE)
                 print("Process  terminated.")
                 sys.exit()
 
+        if self.ENABLE_LOAD_CHECKPOINT_WEIGHT:
             if not path.exists(self.LOAD_CHECKPOINT_WEIGHT):
                 print(
                     "Please check %s file exists or re-configure LOAD_CHECKPOINT_WEIGHT." % self.LOAD_CHECKPOINT_WEIGHT)

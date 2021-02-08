@@ -66,8 +66,11 @@ checkpoint_model = "model.h5"
 ;檢查點權重名稱
 checkpoint_weights = "weight"
 
-;是否載入儲存點
-enable_load_checkpoint_model = false
+;是否載入儲存點 H5
+enable_load_checkpoint_h5 = false
+
+;是否載入儲存點 WEIGHT
+enable_load_checkpoint_weight = false
 
 ;載入儲存點路徑+名稱(h5檔)
 load_checkpoint_h5_file = "model.h5"
