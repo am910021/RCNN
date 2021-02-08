@@ -73,7 +73,7 @@ enable_load_checkpoint_h5 = false
 enable_load_checkpoint_weight = false
 
 ;載入儲存點路徑+名稱(h5檔)
-load_checkpoint_h5_file = "model.h5"
+load_checkpoint_h5_model = "model.h5"
 
 ;設定增強學習的程式 位置 module/enhance/xxx.py origin=原始數據 rotation45=加入轉45角的資料
 image_enhance_file = "rotation45, rotation90"

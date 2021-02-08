@@ -88,7 +88,7 @@ class ModelHelper:
         return self.model_final
 
     def __init_model(self):
-        if self.config.ENABLE_LOAD_CHECKPOINT_H5:
+        if self.config.ENABLE_LOAD_CHECKPOINT_MODEL:
             self.__load_h5_model()
         else:
             self.__create_model()
