@@ -95,8 +95,6 @@ class Config:
             self.ENABLE_LOAD_CHECKPOINT_MODEL = config['CHECKPOINT']['enable_load_checkpoint_model'].upper() == "TRUE"
             self.LOAD_CHECKPOINT_H5_FILE \
                 = config['CHECKPOINT']['load_checkpoint_h5_file'].replace('"', '').replace("'", '').replace(" ", '')
-            self.LOAD_CHECKPOINT_WEIGHT \
-                = config['CHECKPOINT']['load_checkpoint_weight'].replace('"', '').replace("'", '').replace(" ", '')
             self.IMAGE_ENHANCE_FILE \
                 = config['CHECKPOINT']['image_enhance_file'].replace('"', '').replace("'", '').replace(" ", '').split(
                 ",")
