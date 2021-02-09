@@ -39,7 +39,7 @@ class Selective:
         return ret
 
     def is_end(self) -> bool:
-        return self.__count >= len(self.__ssresults)
+        return self.__count >= len(self.__ssresults)-1
 
     def write(self, x, y, w, h):
         self.__read_lock.acquire()

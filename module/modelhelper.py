@@ -4,7 +4,7 @@ from module.config import Config
 from tensorflow.python.keras.engine.functional import Functional
 import tensorflow as tf
 import importlib
-import sys, time
+import sys, time, os
 from tensorflow.keras.optimizers import Adam
 from tensorflow.python.client import device_lib
 from os import path
@@ -25,16 +25,11 @@ class ModelHelper:
         return [x.name for x in local_device_protos if x.device_type == 'GPU']
 
     def __get_final_devices(self) -> list:
-        devices = ['/device:CPU:0']
-        if self.config.ENABLE_GPU_ACCELERATE and len(self.config.USE_GPU_LIST) == 0:
+        devices = []
+        if len(self.config.USE_GPU_LIST) == 0:
             devices = self.__get_available_gpus()
-        elif self.config.ENABLE_GPU_ACCELERATE and len(self.config.USE_GPU_LIST) > 0:
+        elif len(self.config.USE_GPU_LIST) > 0:
             devices = self.config.USE_GPU_LIST
-
-        if any("CPU" in s for s in devices):
-            print(
-                bcolors.WARNING + "Warning: The current configuration is CPU training neural network, the training speed is relatively slow." + bcolors.ENDC)
-        time.sleep(5)
         return devices
 
     def __create_model(self, printSummary=False):
@@ -54,15 +49,27 @@ class ModelHelper:
         # 新建類別
         cnnModel = NetModel(self.config)
 
-        # 指定運算設備
-        mirrored_strategy = tf.distribute.MirroredStrategy(devices=self.__get_final_devices())
-        with mirrored_strategy.scope():
+        # 指定運算設備 true=gpu  false=cpu
+        if self.config.ENABLE_GPU_ACCELERATE:
+            mirrored_strategy = tf.distribute.MirroredStrategy(devices=self.__get_final_devices())
+            with mirrored_strategy.scope():
+                opt = Adam(lr=self.config.LEARNING_RATE)
+                cnnModel = NetModel(self.config)
+                self.__model_final = cnnModel.createNewModel()
+                self.__model_final.compile(loss=tf.keras.losses.categorical_crossentropy, optimizer=opt, metrics=["accuracy"])
+        else:
+            print()
+            print(bcolors.WARNING + "Warning: The current configuration is CPU mode." + bcolors.ENDC)
+            os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
             opt = Adam(lr=self.config.LEARNING_RATE)
             cnnModel = NetModel(self.config)
             self.__model_final = cnnModel.createNewModel()
-            self.__model_final.compile(loss=tf.keras.losses.categorical_crossentropy, optimizer=opt, metrics=["accuracy"])
-            if printSummary:
-                self.__model_final.summary()
+            self.__model_final.compile(loss=tf.keras.losses.categorical_crossentropy, optimizer=opt,
+                                       metrics=["accuracy"])
+        if printSummary:
+            self.__model_final.summary()
+
+
         print()
         print('From ' + self.config.CNN_MODEL_FILE + ' create model success.')
         time.sleep(5)
@@ -76,11 +83,17 @@ class ModelHelper:
         sys.stdout.write("\rLoading saved model from %s ." % self.config.LOAD_CHECKPOINT_H5_MODEL)
         sys.stdout.flush()
 
-        # 指定運算設備
-        mirrored_strategy = tf.distribute.MirroredStrategy(devices=self.__get_final_devices())
-        with mirrored_strategy.scope():
+        # 指定運算設備 true=gpu  false=cpu
+        if self.config.ENABLE_GPU_ACCELERATE:
+            mirrored_strategy = tf.distribute.MirroredStrategy(devices=self.__get_final_devices())
+            with mirrored_strategy.scope():
+                self.__model_final = tf.keras.models.load_model(self.config.LOAD_CHECKPOINT_H5_MODEL)
+        else:
+            print(bcolors.WARNING + "Warning: The current configuration is CPU mode." + bcolors.ENDC)
+            os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
             self.__model_final = tf.keras.models.load_model(self.config.LOAD_CHECKPOINT_H5_MODEL)
-            if printSummary:
+
+        if printSummary:
                 self.__model_final.summary()
         print('\rFrom ' + self.config.LOAD_CHECKPOINT_H5_MODEL + ' load model success.')
         time.sleep(5)

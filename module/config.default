@@ -83,3 +83,7 @@ enable_opencv_optimized = true
 input_path = "images"
 output_path = "out"
 workers = 10
+
+[OPENCV]
+;啟用opencv優化
+enable_opencv_optimized = true
