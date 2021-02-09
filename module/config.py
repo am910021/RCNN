@@ -94,7 +94,7 @@ class Config:
             self.CHECKPOINT_WEIGHTS \
                 = config['CHECKPOINT']['checkpoint_weights'].replace('"', '').replace("'", '').replace(" ", '')
 
-            self.ENABLE_LOAD_CHECKPOINT_MODEL = config['CHECKPOINT']['enable_load_checkpoint_model'].upper() == "TRUE"
+            self.ENABLE_LOAD_CHECKPOINT_H5 = config['CHECKPOINT']['enable_load_checkpoint_h5'].upper() == "TRUE"
             self.LOAD_CHECKPOINT_H5_MODEL \
                 = config['CHECKPOINT']['load_checkpoint_h5_model'].replace('"', '').replace("'", '').replace(" ", '')
             self.IMAGE_ENHANCE_FILE \
@@ -147,7 +147,7 @@ class Config:
                 print("Process  terminated.")
                 sys.exit()
 
-        if self.ENABLE_LOAD_CHECKPOINT_MODEL:
+        if self.ENABLE_LOAD_CHECKPOINT_H5:
             if not path.exists(self.LOAD_CHECKPOINT_H5_MODEL):
                 print(
                     "Please check %s file exists or re-configure LOAD_CHECKPOINT_H5_MODEL." % self.LOAD_CHECKPOINT_H5_MODEL)
