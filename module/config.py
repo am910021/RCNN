@@ -101,12 +101,12 @@ class Config:
                 = config['CHECKPOINT']['image_enhance_file'].replace('"', '').replace("'", '').replace(" ", '').split(
                 ",")
 
-            self.ENABLE_OPENCV_OPTIMIZED = config['OTHER']['enable_opencv_optimized'].upper() == "TRUE"
-
             now = datetime.now()
             self.TIME_PATH = now.strftime("/%Y-%m-%d-%H-%M-%S/")
+            self.TIME = now.strftime("%Y-%m-%d-%H-%M-%S")
 
             self.DETECTOR = DETECTOR(config)
+            self.OPENCV = OPENCV(config)
 
         except Exception as ex:
             print(ex)
@@ -164,3 +164,9 @@ class DETECTOR:
         self.INPUT_PATH = config['DETECTOR']['input_path'].replace('"', '').replace("'", '').replace(" ", '')
         self.OUTPUT_PATH = config['DETECTOR']['output_path'].replace('"', '').replace("'", '').replace(" ", '')
         self.WORKERS = int(config['DETECTOR']['workers'].replace('"', '').replace("'", '').replace(" ", ''))
+
+
+class OPENCV:
+    def __init__(self, config):
+        self.ENABLE_OPENCV_OPTIMIZED = config['OPENCV']['enable_opencv_optimized'].upper() == "TRUE"
+        self.CONVERT_MODE_SAVE_PATH = config['OPENCV']['convert_mode_save_path'].replace('"', '').replace("'", '').replace(" ", '')

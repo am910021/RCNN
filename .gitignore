@@ -10,3 +10,5 @@
 *.cfg.ini
 /out/
 /target/
+/opencv/
+/json/

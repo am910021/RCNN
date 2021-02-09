@@ -212,7 +212,7 @@ class DatasetHelper:
         self.imageGenerate = None
 
         # OpenCV優化
-        cv2.setUseOptimized(self.config.ENABLE_OPENCV_OPTIMIZED)
+        cv2.setUseOptimized(self.config.OPENCV.ENABLE_OPENCV_OPTIMIZED)
         # Selective Search物體偵測候選區域
         self.ss = cv2.ximgproc.segmentation.createSelectiveSearchSegmentation()
         self.train_images = []

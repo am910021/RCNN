@@ -75,9 +75,6 @@ load_checkpoint_h5_model = "model.h5"
 ;設定增強學習的程式 位置 module/enhance/xxx.py origin=原始數據 rotation45=加入轉45角的資料
 image_enhance_file = "rotation45, rotation90"
 
-[OTHER]
-;啟用opencv優化
-enable_opencv_optimized = true
 
 [DETECTOR]
 input_path = "images"
@@ -87,3 +84,7 @@ workers = 10
 [OPENCV]
 ;啟用opencv優化
 enable_opencv_optimized = true
+
+;tf模型轉檔到opencv的存檔位置
+;<convert_mode_save_path>/<cnn_model_file>.pb
+convert_mode_save_path = "opencv/"
