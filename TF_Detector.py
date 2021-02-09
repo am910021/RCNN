@@ -95,6 +95,7 @@ def detector(config: Config, model: Functional):
 
         cv2.imwrite(path.join(config.DETECTOR.OUTPUT_PATH, file), selective.get_imout())
         print("\r%s Done." % file)
+        print()
 
 
 # Press the green button in the gutter to run the script.

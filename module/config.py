@@ -87,29 +87,16 @@ class Config:
             self.FILE_PREFIXES \
                 = config['DATASET']['file_prefixes'].replace('"', '').replace("'", '').replace(" ", '')
 
-            self.CHECKPOINT_PATH \
-                = config['CHECKPOINT']['checkpoint_path'].replace('"', '').replace("'", '').replace(" ", '')
-            self.CHECKPOINT_MODEL \
-                = config['CHECKPOINT']['checkpoint_model'].replace('"', '').replace("'", '').replace(" ", '')
-            self.CHECKPOINT_WEIGHTS \
-                = config['CHECKPOINT']['checkpoint_weights'].replace('"', '').replace("'", '').replace(" ", '')
-
-            self.ENABLE_LOAD_CHECKPOINT_H5 = config['CHECKPOINT']['enable_load_checkpoint_h5'].upper() == "TRUE"
-            self.LOAD_CHECKPOINT_H5_MODEL \
-                = config['CHECKPOINT']['load_checkpoint_h5_model'].replace('"', '').replace("'", '').replace(" ", '')
-            self.IMAGE_ENHANCE_FILE \
-                = config['CHECKPOINT']['image_enhance_file'].replace('"', '').replace("'", '').replace(" ", '').split(
-                ",")
-
             now = datetime.now()
             self.TIME_PATH = now.strftime("/%Y-%m-%d-%H-%M-%S/")
             self.TIME = now.strftime("%Y-%m-%d-%H-%M-%S")
 
             self.DETECTOR = DETECTOR(config)
             self.OPENCV = OPENCV(config)
+            self.CHECKPOINT = CHECKPOINT(config)
 
         except Exception as ex:
-            print(ex)
+            print("%s key not found." % ex)
             sys.exit()
 
         self.check_config_file()
@@ -119,12 +106,12 @@ class Config:
         sys.stdout.flush()
 
         # 判斷是否有設定「增強學習的程式」
-        if len(self.IMAGE_ENHANCE_FILE) == 0:
+        if len(self.CHECKPOINT.IMAGE_ENHANCE_FILE) == 0:
             print("Please configure IMAGE_ENHANCE_FILE, then restart program.")
             print("Process  terminated.")
             sys.exit()
 
-        for file in self.IMAGE_ENHANCE_FILE:
+        for file in self.CHECKPOINT.IMAGE_ENHANCE_FILE:
             if not path.exists('module/enhance/' + file + '.py'):
                 print("Please check module/enhance/%s.py file exists or re-configure IMAGE_ENHANCE_FILE." % file)
                 print("Process  terminated.")
@@ -147,10 +134,10 @@ class Config:
                 print("Process  terminated.")
                 sys.exit()
 
-        if self.ENABLE_LOAD_CHECKPOINT_H5:
-            if not path.exists(self.LOAD_CHECKPOINT_H5_MODEL):
+        if self.CHECKPOINT.ENABLE_LOAD_CHECKPOINT_H5:
+            if not path.exists(self.CHECKPOINT.LOAD_CHECKPOINT_H5_MODEL):
                 print(
-                    "Please check %s file exists or re-configure LOAD_CHECKPOINT_H5_MODEL." % self.LOAD_CHECKPOINT_H5_MODEL)
+                    "Please check %s file exists or re-configure LOAD_CHECKPOINT_H5_MODEL." % self.CHECKPOINT.LOAD_CHECKPOINT_H5_MODEL)
                 print("Process  terminated.")
                 sys.exit()
 
@@ -160,13 +147,32 @@ class Config:
 
 
 class DETECTOR:
-    def __init__(self, config):
+    def __init__(self, config: Config):
         self.INPUT_PATH = config['DETECTOR']['input_path'].replace('"', '').replace("'", '').replace(" ", '')
         self.OUTPUT_PATH = config['DETECTOR']['output_path'].replace('"', '').replace("'", '').replace(" ", '')
         self.WORKERS = int(config['DETECTOR']['workers'].replace('"', '').replace("'", '').replace(" ", ''))
 
 
 class OPENCV:
-    def __init__(self, config):
+    def __init__(self, config: Config):
         self.ENABLE_OPENCV_OPTIMIZED = config['OPENCV']['enable_opencv_optimized'].upper() == "TRUE"
-        self.CONVERT_MODE_SAVE_PATH = config['OPENCV']['convert_mode_save_path'].replace('"', '').replace("'", '').replace(" ", '')
+        self.CONVERT_MODE_SAVE_PATH = config['OPENCV']['convert_mode_save_path'].replace('"', '').replace("'",
+                                                                                                          '').replace(
+            " ", '')
+
+
+class CHECKPOINT:
+    def __init__(self, config):
+        self.CHECKPOINT_PATH \
+            = config['CHECKPOINT']['checkpoint_path'].replace('"', '').replace("'", '').replace(" ", '')
+        self.CHECKPOINT_MODEL \
+            = config['CHECKPOINT']['checkpoint_model'].replace('"', '').replace("'", '').replace(" ", '')
+        self.CHECKPOINT_WEIGHTS \
+            = config['CHECKPOINT']['checkpoint_weights'].replace('"', '').replace("'", '').replace(" ", '')
+
+        self.ENABLE_LOAD_CHECKPOINT_H5 = config['CHECKPOINT']['enable_load_checkpoint_h5'].upper() == "TRUE"
+        self.LOAD_CHECKPOINT_H5_MODEL \
+            = config['CHECKPOINT']['load_checkpoint_h5_model'].replace('"', '').replace("'", '').replace(" ", '')
+        self.IMAGE_ENHANCE_FILE \
+            = config['CHECKPOINT']['image_enhance_file'].replace('"', '').replace("'", '').replace(" ", '').split(
+            ",")

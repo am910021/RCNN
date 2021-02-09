@@ -75,34 +75,34 @@ class ModelHelper:
         time.sleep(5)
 
     def __load_h5_model(self, printSummary=False):
-        if not path.exists(self.config.LOAD_CHECKPOINT_H5_MODEL):
-            print("Unable to load the checkpoint model at " + self.config.LOAD_CHECKPOINT_H5_MODEL)
+        if not path.exists(self.config.CHECKPOINT.LOAD_CHECKPOINT_H5_MODEL):
+            print("Unable to load the checkpoint model at " + self.config.CHECKPOINT.LOAD_CHECKPOINT_H5_MODEL)
             print("Process  terminated.")
             sys.exit()
 
-        sys.stdout.write("\rLoading saved model from %s ." % self.config.LOAD_CHECKPOINT_H5_MODEL)
+        sys.stdout.write("\rLoading saved model from %s ." % self.config.CHECKPOINT.LOAD_CHECKPOINT_H5_MODEL)
         sys.stdout.flush()
 
         # 指定運算設備 true=gpu  false=cpu
         if self.config.ENABLE_GPU_ACCELERATE:
             mirrored_strategy = tf.distribute.MirroredStrategy(devices=self.__get_final_devices())
             with mirrored_strategy.scope():
-                self.__model_final = tf.keras.models.load_model(self.config.LOAD_CHECKPOINT_H5_MODEL)
+                self.__model_final = tf.keras.models.load_model(self.config.CHECKPOINT.LOAD_CHECKPOINT_H5_MODEL)
         else:
             print(bcolors.WARNING + "Warning: The current configuration is CPU mode." + bcolors.ENDC)
             os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-            self.__model_final = tf.keras.models.load_model(self.config.LOAD_CHECKPOINT_H5_MODEL)
+            self.__model_final = tf.keras.models.load_model(self.config.CHECKPOINT.LOAD_CHECKPOINT_H5_MODEL)
 
         if printSummary:
                 self.__model_final.summary()
-        print('\rFrom ' + self.config.LOAD_CHECKPOINT_H5_MODEL + ' load model success.')
+        print('\rFrom ' + self.config.CHECKPOINT.LOAD_CHECKPOINT_H5_MODEL + ' load model success.')
         time.sleep(5)
 
     def get_model(self) -> Functional:
         return self.__model_final
 
     def __init_model(self):
-        if self.config.ENABLE_LOAD_CHECKPOINT_H5:
+        if self.config.CHECKPOINT.ENABLE_LOAD_CHECKPOINT_H5:
             self.__load_h5_model()
         else:
             self.__create_model()
@@ -124,5 +124,5 @@ class ModelHelper:
         plt.xlabel("Epoch")
         plt.legend(["Loss", "Validation Loss"])
         plt.savefig(
-            self.config.CHECKPOINT_PATH + "/" + self.config.CNN_MODEL_FILE + self.config.TIME_PATH + 'chart loss.png')
-        print("train end, loss chart save in " + self.config.CHECKPOINT_PATH + "/" + self.config.CNN_MODEL_FILE + self.config.TIME_PATH + 'chart loss.png')
+            self.config.CHECKPOINT.CHECKPOINT_PATH + "/" + self.config.CNN_MODEL_FILE + self.config.TIME_PATH + 'chart loss.png')
+        print("train end, loss chart save in " + self.config.CHECKPOINT.CHECKPOINT_PATH + "/" + self.config.CNN_MODEL_FILE + self.config.TIME_PATH + 'chart loss.png')

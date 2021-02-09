@@ -171,7 +171,7 @@ class DatasetHelper:
                                              originn_gen.flow(x=x_test, y=y_test, batch_size=self.config.BATCH_SIZE))
 
         # 讀設所有「增強學習的程式」，並執行
-        for t in self.config.IMAGE_ENHANCE_FILE:
+        for t in self.config.CHECKPOINT.IMAGE_ENHANCE_FILE:
             sys.stdout.write("\rCreating %s enhance image dataset." % t)
             sys.stdout.flush()
 
