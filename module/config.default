@@ -69,9 +69,6 @@ checkpoint_weights = "weight"
 ;是否載入儲存點 H5
 enable_load_checkpoint_h5 = false
 
-;是否載入儲存點 WEIGHT
-enable_load_checkpoint_weight = false
-
 ;載入儲存點路徑+名稱(h5檔)
 load_checkpoint_h5_model = "model.h5"
 
@@ -82,5 +79,7 @@ image_enhance_file = "rotation45, rotation90"
 ;啟用opencv優化
 enable_opencv_optimized = true
 
-;cpu線程數
-cpu_thread = 6
+[DETECTOR]
+input_path = "images"
+output_path = "out"
+workers = 10

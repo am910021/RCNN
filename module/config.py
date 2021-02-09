@@ -93,18 +93,20 @@ class Config:
                 = config['CHECKPOINT']['checkpoint_model'].replace('"', '').replace("'", '').replace(" ", '')
             self.CHECKPOINT_WEIGHTS \
                 = config['CHECKPOINT']['checkpoint_weights'].replace('"', '').replace("'", '').replace(" ", '')
+
             self.ENABLE_LOAD_CHECKPOINT_MODEL = config['CHECKPOINT']['enable_load_checkpoint_model'].upper() == "TRUE"
-            self.LOAD_CHECKPOINT_H5_FILE \
-                = config['CHECKPOINT']['load_checkpoint_h5_file'].replace('"', '').replace("'", '').replace(" ", '')
+            self.LOAD_CHECKPOINT_H5_MODEL \
+                = config['CHECKPOINT']['load_checkpoint_h5_model'].replace('"', '').replace("'", '').replace(" ", '')
             self.IMAGE_ENHANCE_FILE \
                 = config['CHECKPOINT']['image_enhance_file'].replace('"', '').replace("'", '').replace(" ", '').split(
                 ",")
 
             self.ENABLE_OPENCV_OPTIMIZED = config['OTHER']['enable_opencv_optimized'].upper() == "TRUE"
-            self.CPU_THREAD = int(config['OTHER']['cpu_thread'])
 
             now = datetime.now()
             self.TIME_PATH = now.strftime("/%Y-%m-%d-%H-%M-%S/")
+
+            self.DETECTOR = DETECTOR(config)
 
         except Exception as ex:
             print(ex)
@@ -146,12 +148,19 @@ class Config:
                 sys.exit()
 
         if self.ENABLE_LOAD_CHECKPOINT_MODEL:
-            if not path.exists(self.LOAD_CHECKPOINT_H5_FILE):
+            if not path.exists(self.LOAD_CHECKPOINT_H5_MODEL):
                 print(
-                    "Please check %s file exists or re-configure LOAD_CHECKPOINT_H5_FILE." % self.LOAD_CHECKPOINT_H5_FILE)
+                    "Please check %s file exists or re-configure LOAD_CHECKPOINT_H5_MODEL." % self.LOAD_CHECKPOINT_H5_MODEL)
                 print("Process  terminated.")
                 sys.exit()
 
         sys.stdout.write("\rConfig file check success.")
         sys.stdout.flush()
         print()
+
+
+class DETECTOR:
+    def __init__(self, config):
+        self.INPUT_PATH = config['DETECTOR']['input_path'].replace('"', '').replace("'", '').replace(" ", '')
+        self.OUTPUT_PATH = config['DETECTOR']['output_path'].replace('"', '').replace("'", '').replace(" ", '')
+        self.WORKERS = int(config['DETECTOR']['workers'].replace('"', '').replace("'", '').replace(" ", ''))

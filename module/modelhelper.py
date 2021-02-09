@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 class ModelHelper:
     def __init__(self, config: Config):
         self.config = config
-        self.model_final = None
+        self.__model_final = None
         self.__init_model()
 
     def __get_available_gpus(self):
@@ -59,34 +59,34 @@ class ModelHelper:
         with mirrored_strategy.scope():
             opt = Adam(lr=self.config.LEARNING_RATE)
             cnnModel = NetModel(self.config)
-            self.model_final = cnnModel.createNewModel()
-            self.model_final.compile(loss=tf.keras.losses.categorical_crossentropy, optimizer=opt, metrics=["accuracy"])
+            self.__model_final = cnnModel.createNewModel()
+            self.__model_final.compile(loss=tf.keras.losses.categorical_crossentropy, optimizer=opt, metrics=["accuracy"])
             if printSummary:
-                self.model_final.summary()
+                self.__model_final.summary()
         print()
         print('From ' + self.config.CNN_MODEL_FILE + ' create model success.')
         time.sleep(5)
 
     def __load_h5_model(self, printSummary=False):
-        if not path.exists(self.config.LOAD_CHECKPOINT_H5_FILE):
-            print("Unable to load the checkpoint model at " + self.config.LOAD_CHECKPOINT_H5_FILE)
+        if not path.exists(self.config.LOAD_CHECKPOINT_H5_MODEL):
+            print("Unable to load the checkpoint model at " + self.config.LOAD_CHECKPOINT_H5_MODEL)
             print("Process  terminated.")
             sys.exit()
 
-        sys.stdout.write("\rLoading saved model from %s ." % self.config.LOAD_CHECKPOINT_H5_FILE)
+        sys.stdout.write("\rLoading saved model from %s ." % self.config.LOAD_CHECKPOINT_H5_MODEL)
         sys.stdout.flush()
 
         # 指定運算設備
         mirrored_strategy = tf.distribute.MirroredStrategy(devices=self.__get_final_devices())
         with mirrored_strategy.scope():
-            self.model_final = tf.keras.models.load_model(self.config.LOAD_CHECKPOINT_H5_FILE)
+            self.__model_final = tf.keras.models.load_model(self.config.LOAD_CHECKPOINT_H5_MODEL)
             if printSummary:
-                self.model_final.summary()
-        print('\rFrom ' + self.config.LOAD_CHECKPOINT_H5_FILE + ' load model success.')
+                self.__model_final.summary()
+        print('\rFrom ' + self.config.LOAD_CHECKPOINT_H5_MODEL + ' load model success.')
         time.sleep(5)
 
     def get_model(self) -> Functional:
-        return self.model_final
+        return self.__model_final
 
     def __init_model(self):
         if self.config.ENABLE_LOAD_CHECKPOINT_MODEL:
@@ -95,7 +95,7 @@ class ModelHelper:
             self.__create_model()
 
     def run_train_cnn(self, dataset: DatasetHelper, callback: CallbackHelper):
-        hist = self.model_final.fit(
+        hist = self.__model_final.fit(
             dataset.get_train_dataset(),
             batch_size=self.config.BATCH_SIZE,
             steps_per_epoch=self.config.STEPS_PER_EPOCH,
