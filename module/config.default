@@ -50,10 +50,10 @@ test_dataset_size = 20
 load_cache_dataset = true
 
 ;資料集的原始圖片位置
-path = "Images"
+path = "dataset/Images"
 
 ;資料集的標記檔位置
-annot = "new_annot"
+annot = "dataset/new_annot"
 
 [CHECKPOINT]
 ;檢查點位置
