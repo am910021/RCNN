@@ -6,102 +6,66 @@ import os, sys, cv2
 from module.config import Config
 import pickle
 import hashlib
-import pandas as pd
 import importlib
-from module.iou import IOU
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
 import numpy as np
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import itertools
-
-
-class MyLabelBinarizer(LabelBinarizer):
-    def transform(self, y):
-        Y = super().transform(y)
-        if self.y_type_ == 'binary':
-            return np.hstack((Y, 1 - Y))
-        else:
-            return Y
-
-    def inverse_transform(self, Y, threshold=None):
-        if self.y_type_ == 'binary':
-            return super().inverse_transform(Y[:, 0], threshold)
-        else:
-            return super().inverse_transform(Y, threshold)
+import csv
 
 
 class DatasetHelper:
     # 讀取資料集 資料前處理
-    def load_origin_data(self, saveCache=True):
-        annot_list = os.listdir(self.config.ANNOT)
-        total_amount = len(annot_list)
-        print("Loading dataset.")
+    def load_origin_data(self):
 
-        for index, file in enumerate(annot_list):
-            sys.stdout.write("\rProgress %d/%d" % (index + 1, total_amount))
-            sys.stdout.flush()
+        # 分類列表
+        classification_list = os.listdir(self.config.ANNOT)
+        classification_len = len(classification_list)
 
-            try:
-                if file.startswith(self.config.FILE_PREFIXES):
-                    filename = file.split(".")[0] + ".jpg"
-                    # print(index,filename)
-                    image = cv2.imread(os.path.join(self.config.PATH, filename))
-                    df = pd.read_csv(os.path.join(self.config.ANNOT, file))
-                    gtvalues = []
-                    for row in df.iterrows():
-                        x1 = int(row[1][0].split(" ")[0])
-                        y1 = int(row[1][0].split(" ")[1])
-                        x2 = int(row[1][0].split(" ")[2])
-                        y2 = int(row[1][0].split(" ")[3])
-                        gtvalues.append({"x1": x1, "x2": x2, "y1": y1, "y2": y2})
-                    self.ss.setBaseImage(image)
-                    self.ss.switchToSelectiveSearchFast()
-                    ssresults = self.ss.process()
-                    imout = image.copy()
-                    counter = 0
-                    falsecounter = 0
-                    flag = 0
-                    fflag = 0
-                    bflag = 0
-                    for index, result in enumerate(ssresults):
-                        if index < 2000 and flag == 0:
-                            for gtval in gtvalues:
-                                x, y, w, h = result
-                                iou = IOU.calc(gtval, {"x1": x, "x2": x + w, "y1": y, "y2": y + h})
-                                if counter < 30:
-                                    if iou > 0.70:
-                                        timage = imout[y:y + h, x:x + w]
-                                        resized = cv2.resize(timage, (self.config.IMG_WIDTH, self.config.IMG_HEIGHT),
-                                                             interpolation=cv2.INTER_AREA)
-                                        self.train_images.append(resized)
-                                        self.train_labels.append(1)
-                                        counter += 1
-                                else:
-                                    fflag = 1
-                                if falsecounter < 30:
-                                    if iou < 0.3:
-                                        timage = imout[y:y + h, x:x + w]
-                                        resized = cv2.resize(timage, (self.config.IMG_WIDTH, self.config.IMG_HEIGHT),
-                                                             interpolation=cv2.INTER_AREA)
-                                        self.train_images.append(resized)
-                                        self.train_labels.append(0)
-                                        falsecounter += 1
-                                else:
-                                    bflag = 1
-                            if fflag == 1 and bflag == 1:
-                                # print("inside")
-                                flag = 1
-            except Exception as ex:
-                print(ex)
-                print("error in " + filename)
-                continue
-        sys.stdout.write("\rLoad complete.     ")
+        # 圖片列表
+        img_list = os.listdir(self.config.PATH)
+        img_count = len(img_list)
+
+        # 讀取圖片列表
+        for index, img_name in enumerate(img_list):
+            img_path = os.path.join(self.config.PATH, img_name)  # 圖片路徑
+            image = cv2.imread(img_path)  # 讀取圖片
+            csv_name = os.path.splitext(img_name)[0] + ".csv"  # csv檔名
+            imout = image.copy()
+
+            # 讀取類別
+            for cli, cl in enumerate(classification_list):
+
+                sys.stdout.write("\rLoad Annotations file from %s, progress %d/%d                        " % (
+                csv_name, index + 1, img_count))
+                sys.stdout.flush()
+
+                # create classification list
+                c = [0] * classification_len
+                c[cli] = 1
+                # load csv file
+                csv_path = os.path.join(self.config.ANNOT, cl, csv_name)
+                # print(csv_path)
+                if not os.path.exists(csv_path):
+                    continue
+
+                with open(csv_path, newline='') as csvfile:
+
+                    rows = csv.reader(csvfile, delimiter=',')
+                    for trow in rows:
+                        x, y, w, h = list(map(int, trow))
+                        timage = imout[y:y + h, x:x + w]
+                        resized = cv2.resize(timage, (self.config.IMG_WIDTH, self.config.IMG_HEIGHT),
+                                             interpolation=cv2.INTER_AREA)
+                        self.train_labels.append(c)
+                        self.train_images.append(resized)
+        sys.stdout.write("\rLoad Annotations success.                                                           ")
         sys.stdout.flush()
         print()
 
-        if (saveCache):
-            sys.stdout.write("\rSaving dataset cache.")
+        if (self.save_cache):
+            sys.stdout.write("\rSaving dataset to cache file.")
             sys.stdout.flush()
 
             img_hash = hashlib.sha256(repr(self.train_images).encode()).hexdigest()
@@ -147,7 +111,7 @@ class DatasetHelper:
                 sys.stdout.flush()
                 self.load_origin_data()
             else:
-                sys.stdout.write("\rLoad dataset cache complete. ")
+                sys.stdout.write("\rLoad dataset cache success. ")
                 sys.stdout.flush()
         else:
             self.load_origin_data()
@@ -158,10 +122,9 @@ class DatasetHelper:
         raw_events = itertools.chain()
 
         # 分割原始資料集 訓練集 測式集
-        lenc = MyLabelBinarizer()
         x_train, x_test, y_train, y_test = train_test_split(
             np.array(self.train_images),
-            lenc.fit_transform(np.array(self.train_labels)),
+            np.array(self.train_labels),
             test_size=self.config.TEST_DATASET_SIZE / 100
         )
 
@@ -207,8 +170,9 @@ class DatasetHelper:
         self.load_origin_data()
         self.create_train_image_generate()
 
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, save_cache=True):
         self.config = config
+        self.save_cache = save_cache
         self.imageGenerate = None
 
         # OpenCV優化

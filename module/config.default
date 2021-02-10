@@ -50,11 +50,10 @@ test_dataset_size = 20
 load_cache_dataset = true
 
 ;資料集的原始圖片位置
-path = "images"
+path = "Images"
 
 ;資料集的標記檔位置
-annot = "airplanes_annotations"
-file_prefixes = "airplane"
+annot = "new_annot"
 
 [CHECKPOINT]
 ;檢查點位置

@@ -58,7 +58,6 @@ class ModelHelper:
                 self.__model_final = cnnModel.createNewModel()
                 self.__model_final.compile(loss=tf.keras.losses.categorical_crossentropy, optimizer=opt, metrics=["accuracy"])
         else:
-            print()
             print(bcolors.WARNING + "Warning: The current configuration is CPU mode." + bcolors.ENDC)
             os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
             opt = Adam(lr=self.config.LEARNING_RATE)
@@ -82,6 +81,7 @@ class ModelHelper:
 
         sys.stdout.write("\rLoading saved model from %s ." % self.config.CHECKPOINT.LOAD_CHECKPOINT_H5_MODEL)
         sys.stdout.flush()
+        print()
 
         # 指定運算設備 true=gpu  false=cpu
         if self.config.ENABLE_GPU_ACCELERATE:
