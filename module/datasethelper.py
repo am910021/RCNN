@@ -2,7 +2,11 @@
 # -*- coding: utf-8 -*-
 
 
-import os, sys, cv2
+import os, gc
+
+gc.collect()
+
+import sys, cv2
 from module.config import Config
 import pickle
 import hashlib
@@ -40,7 +44,7 @@ class DatasetHelper:
                     break
 
                 sys.stdout.write("\rLoad Annotations file from %s, progress %d/%d                        " % (
-                csv_name, index + 1, img_count))
+                    csv_name, index + 1, img_count))
                 sys.stdout.flush()
 
                 # create classification list

@@ -60,7 +60,7 @@ class Thread(threading.Thread):
         self.model = model
 
     def run(self):
-        while not self.selective.is_end():
+        while True:
             x, y, w, h = self.selective.get_selective()
             timage = self.selective.get_img()[y:y + h, x:x + w]
             resized = cv2.resize(timage, (224, 224), interpolation=cv2.INTER_AREA)
@@ -68,6 +68,9 @@ class Thread(threading.Thread):
             out = self.model.predict(img)
             if out[0][0] > 0.85:
                 self.selective.write(x, y, w, h)
+
+            if self.selective.is_end():
+                break
 
 
 def detector(config: Config, model: Functional):
