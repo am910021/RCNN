@@ -57,24 +57,27 @@ class Config:
         config = ConfigParser(interpolation=ExtendedInterpolation())
         config.read(file)
 
+        self.CLASSIFICATION = 0
+
         try:
-            self.IMG_WIDTH = int(config['GENERAL']['IMG_WIDTH'])
-            self.IMG_HEIGHT = int(config['GENERAL']['IMG_HEIGHT'])
-            self.IMG_CHANNEL = int(config['GENERAL']['IMG_CHANNEL'])
-            self.CLASSIFICATION = int(config['GENERAL']['CLASSIFICATION'])
+            self.IMG_WIDTH = int(config['GENERAL']['img_width'])
+            self.IMG_HEIGHT = int(config['GENERAL']['img_height'])
+            self.IMG_CHANNEL = int(config['GENERAL']['img_channel'])
+            self.CLASSIFICATION = int(config['GENERAL']['classification'])
+
             self.CNN_MODEL_FILE \
-                = config['GENERAL']['CNN_MODEL_FILE'].replace('"', '').replace("'", '').replace(" ", '')
+                = config['GENERAL']['cnn_model_file'].replace('"', '').replace("'", '').replace(" ", '')
             self.CNN_TRAIN_CALLBACK \
-                = config['GENERAL']['CNN_TRAIN_CALLBACK'].replace('"', '').replace("'", '').replace(" ", '').split(",")
-            self.ENABLE_GPU_ACCELERATE = config['GENERAL']['ENABLE_GPU_ACCELERATE'].upper() == "TRUE"
+                = config['GENERAL']['cnn_train_callback'].replace('"', '').replace("'", '').replace(" ", '').split(",")
+            self.ENABLE_GPU_ACCELERATE = config['GENERAL']['enable_gpu_accelerate'].upper() == "TRUE"
             self.USE_GPU_LIST \
-                = config['GENERAL']['USE_GPU_LIST'].replace('"', '').replace("'", '').replace(" ", '').split(",")
-            self.MAX_EPOCHS = int(config['GENERAL']['MAX_EPOCHS'])
-            self.BATCH_SIZE = int(config['GENERAL']['BATCH_SIZE'])
-            self.STEPS_PER_EPOCH = int(config['GENERAL']['STEPS_PER_EPOCH'])
-            self.SAVE_PERIOD = int(config['GENERAL']['SAVE_PERIOD'])
-            self.PATIENCE = int(config['GENERAL']['PATIENCE'])
-            self.LEARNING_RATE = float(config['GENERAL']['LEARNING_RATE'])
+                = config['GENERAL']['use_gpu_list'].replace('"', '').replace("'", '').replace(" ", '').split(",")
+            self.MAX_EPOCHS = int(config['GENERAL']['max_epochs'])
+            self.BATCH_SIZE = int(config['GENERAL']['batch_size'])
+            self.STEPS_PER_EPOCH = int(config['GENERAL']['steps_per_epoch'])
+            self.SAVE_PERIOD = int(config['GENERAL']['save_period'])
+            self.PATIENCE = int(config['GENERAL']['patience'])
+            self.LEARNING_RATE = float(config['GENERAL']['learning_rate'])
 
             self.DATASET_IMAGES_CACHE_NAME \
                 = config['DATASET']['dataset_images_cache_name'].replace('"', '').replace("'", '').replace(" ", '')
@@ -84,8 +87,6 @@ class Config:
             self.LOAD_CACHE_DATASET = config['DATASET']['load_cache_dataset'].upper() == "TRUE"
             self.PATH = config['DATASET']['path'].replace('"', '').replace("'", '').replace(" ", '')
             self.ANNOT = config['DATASET']['annot'].replace('"', '').replace("'", '').replace(" ", '')
-            self.FILE_PREFIXES \
-                = config['DATASET']['file_prefixes'].replace('"', '').replace("'", '').replace(" ", '')
 
             now = datetime.now()
             self.TIME_PATH = now.strftime("/%Y-%m-%d-%H-%M-%S/")

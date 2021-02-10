@@ -21,7 +21,7 @@ class DatasetHelper:
 
         # 分類列表
         classification_list = os.listdir(self.config.ANNOT)
-        classification_len = len(classification_list)
+        self.classification_len = len(classification_list)
 
         # 圖片列表
         img_list = os.listdir(self.config.PATH)
@@ -36,13 +36,15 @@ class DatasetHelper:
 
             # 讀取類別
             for cli, cl in enumerate(classification_list):
+                if cli >= self.config.CLASSIFICATION:
+                    break
 
                 sys.stdout.write("\rLoad Annotations file from %s, progress %d/%d                        " % (
                 csv_name, index + 1, img_count))
                 sys.stdout.flush()
 
                 # create classification list
-                c = [0] * classification_len
+                c = [0] * self.classification_len
                 c[cli] = 1
                 # load csv file
                 csv_path = os.path.join(self.config.ANNOT, cl, csv_name)
@@ -181,6 +183,7 @@ class DatasetHelper:
         self.ss = cv2.ximgproc.segmentation.createSelectiveSearchSegmentation()
         self.train_images = []
         self.train_labels = []
+        self.classification_len = 0
         self.load_cache_Or_load_data()
         self.__trainDataset = itertools.chain()
         self.__testDataset = itertools.chain()
