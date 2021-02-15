@@ -70,59 +70,6 @@ class DatasetHelper:
         sys.stdout.flush()
         print()
 
-        if (self.save_cache):
-            sys.stdout.write("\rSaving dataset to cache file.")
-            sys.stdout.flush()
-
-            img_hash = hashlib.sha256(repr(self.train_images).encode()).hexdigest()
-            lab_hash = hashlib.sha256(repr(self.train_labels).encode()).hexdigest()
-
-            tmp_images = [img_hash, self.train_images]
-            tmp_labels = [lab_hash, self.train_labels]
-            pickle.dump(tmp_images, open(self.config.DATASET_IMAGES_CACHE_NAME, "wb"))
-            pickle.dump(tmp_labels, open(self.config.DATASET_LABELS_CACHE_NAME, "wb"))
-
-            sys.stdout.write("\rDataset cache saved.         ")
-            sys.stdout.flush()
-        print()
-
-    def load_cache_Or_load_data(self):
-        if (self.config.LOAD_CACHE_DATASET
-                and os.path.exists(self.config.DATASET_IMAGES_CACHE_NAME)
-                and os.path.exists(self.config.DATASET_LABELS_CACHE_NAME)):
-            sys.stdout.write("\rDataset cache loading.")
-            sys.stdout.flush()
-
-            loaded = False
-            try:
-                load_images = pickle.load(open(self.config.DATASET_IMAGES_CACHE_NAME, "rb"))
-                load_labels = pickle.load(open(self.config.DATASET_LABELS_CACHE_NAME, "rb"))
-
-                if (type(load_images) is list and type(load_labels) is list):
-                    temp_images = load_images[1]
-                    temp_labels = load_labels[1]
-                    img_hash = hashlib.sha256(repr(temp_images).encode()).hexdigest()
-                    lab_hash = hashlib.sha256(repr(temp_labels).encode()).hexdigest()
-
-                    if (img_hash == load_images[0] and lab_hash == load_labels[0]):
-                        self.train_images = temp_images
-                        self.train_labels = temp_labels
-                        loaded = True
-
-            except Exception as ex:
-                loaded = False
-
-            if (not loaded):
-                sys.stdout.write("\rDetected dataset cache broken, reload dataset.")
-                sys.stdout.flush()
-                self.load_origin_data()
-            else:
-                sys.stdout.write("\rLoad dataset cache success. ")
-                sys.stdout.flush()
-        else:
-            self.load_origin_data()
-        print()
-
     def create_train_image_generate(self):
         temp_train = []
         raw_events = itertools.chain()
@@ -176,9 +123,8 @@ class DatasetHelper:
         self.load_origin_data()
         self.create_train_image_generate()
 
-    def __init__(self, config: Config, save_cache=True):
+    def __init__(self, config: Config):
         self.config = config
-        self.save_cache = save_cache
         self.imageGenerate = None
 
         # OpenCV優化
@@ -188,6 +134,6 @@ class DatasetHelper:
         self.train_images = []
         self.train_labels = []
         self.classification_len = 0
-        self.load_cache_Or_load_data()
+        self.load_origin_data()
         self.__trainDataset = itertools.chain()
         self.__testDataset = itertools.chain()
