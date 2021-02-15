@@ -24,7 +24,7 @@ class DatasetHelper:
     def load_origin_data(self):
 
         # 分類列表
-        classification_list = os.listdir(self.config.ANNOT)
+        classification_list = self.config.ANNO_LABEL
         self.classification_len = len(classification_list)
 
         # 圖片列表
@@ -82,7 +82,7 @@ class DatasetHelper:
             pickle.dump(tmp_images, open(self.config.DATASET_IMAGES_CACHE_NAME, "wb"))
             pickle.dump(tmp_labels, open(self.config.DATASET_LABELS_CACHE_NAME, "wb"))
 
-            sys.stdout.write("\rDataset cache saved. ")
+            sys.stdout.write("\rDataset cache saved.         ")
             sys.stdout.flush()
         print()
 

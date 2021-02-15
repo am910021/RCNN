@@ -87,6 +87,8 @@ class Config:
             self.LOAD_CACHE_DATASET = config['DATASET']['load_cache_dataset'].upper() == "TRUE"
             self.PATH = config['DATASET']['path'].replace('"', '').replace("'", '').replace(" ", '')
             self.ANNOT = config['DATASET']['annot'].replace('"', '').replace("'", '').replace(" ", '')
+            self.ANNO_LABEL \
+                = config['DATASET']['annot_label'].replace('"', '').replace("'", '').replace(" ", '').split(",")
 
             now = datetime.now()
             self.TIME_PATH = now.strftime("/%Y-%m-%d-%H-%M-%S/")

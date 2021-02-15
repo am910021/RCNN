@@ -55,6 +55,9 @@ path = "dataset/Images"
 ;資料集的標記檔位置
 annot = "dataset/new_annot"
 
+;資料集標記的類別
+annot_label = "not_plane, plane"
+
 [CHECKPOINT]
 ;檢查點位置
 checkpoint_path = "./checkpoint"
