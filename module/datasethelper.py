@@ -24,7 +24,7 @@ class DatasetHelper:
     def load_origin_data(self):
 
         # 分類列表
-        classification_list = self.config.ANNO_LABEL
+        classification_list = self.config.ANNO_LABELS
         self.classification_len = len(classification_list)
 
         # 圖片列表
@@ -40,8 +40,6 @@ class DatasetHelper:
 
             # 讀取類別
             for cli, cl in enumerate(classification_list):
-                if cli >= self.config.CLASSIFICATION:
-                    break
 
                 sys.stdout.write("\rLoad Annotations file from %s, progress %d/%d                        " % (
                     csv_name, index + 1, img_count))

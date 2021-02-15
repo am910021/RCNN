@@ -16,7 +16,7 @@ class NetModel(NetModelInterface):
             input_shape=(self.Config.IMG_WIDTH, self.Config.IMG_HEIGHT, self.Config.IMG_CHANNEL),
             weights=None, include_top=True,
             classifier_activation="softmax",
-            classes=self.Config.CLASSIFICATION
+            classes=len(self.Config.ANNO_LABELS)
         )
 
         return self.model_final

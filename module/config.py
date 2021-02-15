@@ -57,13 +57,10 @@ class Config:
         config = ConfigParser(interpolation=ExtendedInterpolation())
         config.read(file)
 
-        self.CLASSIFICATION = 0
-
         try:
             self.IMG_WIDTH = int(config['GENERAL']['img_width'])
             self.IMG_HEIGHT = int(config['GENERAL']['img_height'])
             self.IMG_CHANNEL = int(config['GENERAL']['img_channel'])
-            self.CLASSIFICATION = int(config['GENERAL']['classification'])
 
             self.CNN_MODEL_FILE \
                 = config['GENERAL']['cnn_model_file'].replace('"', '').replace("'", '').replace(" ", '')
@@ -87,8 +84,8 @@ class Config:
             self.LOAD_CACHE_DATASET = config['DATASET']['load_cache_dataset'].upper() == "TRUE"
             self.PATH = config['DATASET']['path'].replace('"', '').replace("'", '').replace(" ", '')
             self.ANNOT = config['DATASET']['annot'].replace('"', '').replace("'", '').replace(" ", '')
-            self.ANNO_LABEL \
-                = config['DATASET']['annot_label'].replace('"', '').replace("'", '').replace(" ", '').split(",")
+            self.ANNO_LABELS \
+                = config['DATASET']['annot_labels'].replace('"', '').replace("'", '').replace(" ", '').split(",")
 
             now = datetime.now()
             self.TIME_PATH = now.strftime("/%Y-%m-%d-%H-%M-%S/")

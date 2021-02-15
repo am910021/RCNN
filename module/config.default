@@ -8,9 +8,6 @@ img_height = 224
 ;設定圖片通道數
 img_channel = 3
 
-;分類器數量
-classification = 2
-
 ;設定cnn模型的位置 module/model/xxx.py
 cnn_model_file = "InceptionResNetV2"
 
@@ -56,7 +53,7 @@ path = "dataset/Images"
 annot = "dataset/new_annot"
 
 ;資料集標記的類別
-annot_label = "not_plane, plane"
+annot_labels = "not_plane, plane"
 
 [CHECKPOINT]
 ;檢查點位置
