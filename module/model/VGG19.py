@@ -1,6 +1,5 @@
 import tensorflow as tf
 from tensorflow.python.keras.engine.functional import Functional
-from tensorflow.keras.optimizers import Adam
 from module.config import Config
 from module.model._interface import NetModelInterface
 
@@ -10,7 +9,6 @@ class NetModel(NetModelInterface):
         super().__init__(config)
 
     def createNewModel(self) -> Functional:
-        opt = Adam(lr=self.Config.LEARNING_RATE)
 
         self.model_final = tf.keras.applications.VGG19(
             input_shape=(self.Config.IMG_WIDTH, self.Config.IMG_HEIGHT, self.Config.IMG_CHANNEL),

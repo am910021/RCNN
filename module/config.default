@@ -34,13 +34,13 @@ learning_rate = 0.0001
 
 
 [DATASET]
-;測式集大小 0~100
+;測式集大小 0~100，20代表百分之20
 valid_dataset_size = 20
 
 ;資料集的原始圖片位置
 img_path = "dataset/Images"
 
-;資料集的標記檔位置
+;資料集的標記檔位置，檔案用csv儲存
 annot = "dataset/new_annot"
 
 ;資料集標記的類別
@@ -71,10 +71,10 @@ image_enhance_file = "rotation45, rotation90"
 detect_target = "plane"
 
 ;要偵測的圖片路徑
-input_path = "Images"
+input_path = "dataset/test"
 
 ;偵測完輸出的路徑
-output_path = "out"
+output_path = "output"
 
 ;tensorflow下的線程數量
 workers = 10
