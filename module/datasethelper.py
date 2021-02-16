@@ -8,10 +8,7 @@ gc.collect()
 
 import sys, cv2
 from module.config import Config
-import pickle
-import hashlib
 import importlib
-from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
 import numpy as np
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
@@ -28,12 +25,12 @@ class DatasetHelper:
         self.classification_len = len(classification_list)
 
         # 圖片列表
-        img_list = os.listdir(self.config.PATH)
+        img_list = os.listdir(self.config.IMG_PATH)
         img_count = len(img_list)
 
         # 讀取圖片列表
         for index, img_name in enumerate(img_list):
-            img_path = os.path.join(self.config.PATH, img_name)  # 圖片路徑
+            img_path = os.path.join(self.config.IMG_PATH, img_name)  # 圖片路徑
             image = cv2.imread(img_path)  # 讀取圖片
             csv_name = os.path.splitext(img_name)[0] + ".csv"  # csv檔名
             imout = image.copy()
@@ -73,16 +70,16 @@ class DatasetHelper:
         raw_events = itertools.chain()
 
         # 分割原始資料集 訓練集 測式集
-        x_train, x_test, y_train, y_test = train_test_split(
+        train_images, train_labels, valid_images, valid_labels = train_test_split(
             np.array(self.train_images),
             np.array(self.train_labels),
-            test_size=self.config.TEST_DATASET_SIZE / 100
+            test_size=self.config.VALID_DATASET_SIZE / 100
         )
 
         # 產生測式集資料
         originn_gen = ImageDataGenerator()
         self.__testDataset = itertools.chain(self.__testDataset,
-                                             originn_gen.flow(x=x_test, y=y_test, batch_size=self.config.BATCH_SIZE))
+                                             originn_gen.flow(x=train_labels, y=valid_labels, batch_size=self.config.BATCH_SIZE))
 
         # 讀設所有「增強學習的程式」，並執行
         for t in self.config.CHECKPOINT.IMAGE_ENHANCE_FILE:
@@ -103,7 +100,7 @@ class DatasetHelper:
             imageGenerate = ImageEnhance(self.config)
             # temp_train.append(imageGenerate.createEnhanceTrain(x_train, y_train))
             self.__trainDataset = itertools.chain(self.__trainDataset,
-                                                  imageGenerate.createEnhanceTrain(x_train, y_train))
+                                                  imageGenerate.createEnhanceTrain(train_images, valid_images))
 
             sys.stdout.write("\rEnhance %s image dataset created ." % t)
             sys.stdout.flush()

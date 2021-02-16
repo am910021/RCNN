@@ -104,5 +104,7 @@ def detector(config: Config, model: Functional):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     config = Config()
+    config.init_detector_config() #載入config detector設定
+
     model = ModelHelper(config)
     detector(config, model.get_model())

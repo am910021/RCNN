@@ -56,6 +56,7 @@ class Config:
 
         config = ConfigParser(interpolation=ExtendedInterpolation())
         config.read(file)
+        self.__config_file = config
 
         try:
             self.IMG_WIDTH = int(config['GENERAL']['img_width'])
@@ -76,13 +77,8 @@ class Config:
             self.PATIENCE = int(config['GENERAL']['patience'])
             self.LEARNING_RATE = float(config['GENERAL']['learning_rate'])
 
-            self.DATASET_IMAGES_CACHE_NAME \
-                = config['DATASET']['dataset_images_cache_name'].replace('"', '').replace("'", '').replace(" ", '')
-            self.DATASET_LABELS_CACHE_NAME \
-                = config['DATASET']['dataset_labels_cache_name'].replace('"', '').replace("'", '').replace(" ", '')
-            self.TEST_DATASET_SIZE = int(config['DATASET']['test_dataset_size'])
-            self.LOAD_CACHE_DATASET = config['DATASET']['load_cache_dataset'].upper() == "TRUE"
-            self.PATH = config['DATASET']['path'].replace('"', '').replace("'", '').replace(" ", '')
+            self.VALID_DATASET_SIZE = int(config['DATASET']['valid_dataset_size'])
+            self.IMG_PATH = config['DATASET']['img_path'].replace('"', '').replace("'", '').replace(" ", '')
             self.ANNOT = config['DATASET']['annot'].replace('"', '').replace("'", '').replace(" ", '')
             self.ANNO_LABELS \
                 = config['DATASET']['annot_labels'].replace('"', '').replace("'", '').replace(" ", '').split(",")
@@ -91,11 +87,12 @@ class Config:
             self.TIME_PATH = now.strftime("/%Y-%m-%d-%H-%M-%S/")
             self.TIME = now.strftime("%Y-%m-%d-%H-%M-%S")
 
-            self.DETECTOR = DETECTOR(config)
             self.OPENCV = OPENCV(config)
             self.CHECKPOINT = CHECKPOINT(config)
 
+
         except Exception as ex:
+            print("configure check fail, please check config file or create new config.")
             print("%s key not found." % ex)
             sys.exit()
 
@@ -145,34 +142,71 @@ class Config:
         sys.stdout.flush()
         print()
 
+    def init_detector_config(self):
+        self.DETECTOR = DETECTOR(self, self.__config_file)
+
 
 class DETECTOR:
-    def __init__(self, config: Config):
-        self.INPUT_PATH = config['DETECTOR']['input_path'].replace('"', '').replace("'", '').replace(" ", '')
-        self.OUTPUT_PATH = config['DETECTOR']['output_path'].replace('"', '').replace("'", '').replace(" ", '')
-        self.WORKERS = int(config['DETECTOR']['workers'].replace('"', '').replace("'", '').replace(" ", ''))
+    def __init__(self, config: Config, config_file: dict):
+        self.config = config
+        try:
+            self.INPUT_PATH = config_file['DETECTOR']['input_path'].replace('"', '').replace("'", '').replace(" ", '')
+            self.OUTPUT_PATH = config_file['DETECTOR']['output_path'].replace('"', '').replace("'", '').replace(" ", '')
+            self.WORKERS = int(config_file['DETECTOR']['workers'].replace('"', '').replace("'", '').replace(" ", ''))
+            self.DETECT_TARGET = config_file['DETECTOR']['detect_target'].replace('"', '').replace("'", '').replace(" ", '')
+        except Exception as ex:
+            print("configure check fail, please check config file or create new config.")
+            print("%s key not found." % ex)
+            sys.exit()
+        self.__check__()
+
+    def __check__(self):
+        sys.stdout.write("\rConfig [DETECTOR] Initializing.")
+        sys.stdout.flush()
+
+        # 判斷是否有設定「增強學習的程式」
+        if self.DETECT_TARGET not in self.config.ANNO_LABELS:
+            sys.stdout.write("\rConfig [DETECTOR] check fail.")
+            sys.stdout.flush()
+            print()
+            print("\rPlease check configure [DETECTOR] detect_target, then restart program.")
+            print("\rProcess  terminated.")
+            sys.exit()
+
+        sys.stdout.write("\rConfig [DETECTOR] check success.")
+        sys.stdout.flush()
+        print()
 
 
 class OPENCV:
-    def __init__(self, config: Config):
-        self.ENABLE_OPENCV_OPTIMIZED = config['OPENCV']['enable_opencv_optimized'].upper() == "TRUE"
-        self.CONVERT_MODE_SAVE_PATH = config['OPENCV']['convert_mode_save_path'].replace('"', '').replace("'",
-                                                                                                          '').replace(
-            " ", '')
-
+    def __init__(self, config: dict):
+        try:
+            self.ENABLE_OPENCV_OPTIMIZED = config['OPENCV']['enable_opencv_optimized'].upper() == "TRUE"
+            self.CONVERT_MODE_SAVE_PATH = config['OPENCV']['convert_mode_save_path'].replace('"', '').replace("'",
+                                                                                                              '').replace(
+                " ", '')
+        except Exception as ex:
+            print("configure check fail, please check config file or create new config.")
+            print("%s key not found." % ex)
+            sys.exit()
 
 class CHECKPOINT:
-    def __init__(self, config):
-        self.CHECKPOINT_PATH \
-            = config['CHECKPOINT']['checkpoint_path'].replace('"', '').replace("'", '').replace(" ", '')
-        self.CHECKPOINT_MODEL \
-            = config['CHECKPOINT']['checkpoint_model'].replace('"', '').replace("'", '').replace(" ", '')
-        self.CHECKPOINT_WEIGHTS \
-            = config['CHECKPOINT']['checkpoint_weights'].replace('"', '').replace("'", '').replace(" ", '')
+    def __init__(self, config: dict):
+        try:
+            self.CHECKPOINT_PATH \
+                = config['CHECKPOINT']['checkpoint_path'].replace('"', '').replace("'", '').replace(" ", '')
+            self.CHECKPOINT_MODEL \
+                = config['CHECKPOINT']['checkpoint_model'].replace('"', '').replace("'", '').replace(" ", '')
+            self.CHECKPOINT_WEIGHTS \
+                = config['CHECKPOINT']['checkpoint_weights'].replace('"', '').replace("'", '').replace(" ", '')
 
-        self.ENABLE_LOAD_CHECKPOINT_H5 = config['CHECKPOINT']['enable_load_checkpoint_h5'].upper() == "TRUE"
-        self.LOAD_CHECKPOINT_H5_MODEL \
-            = config['CHECKPOINT']['load_checkpoint_h5_model'].replace('"', '').replace("'", '').replace(" ", '')
-        self.IMAGE_ENHANCE_FILE \
-            = config['CHECKPOINT']['image_enhance_file'].replace('"', '').replace("'", '').replace(" ", '').split(
-            ",")
+            self.ENABLE_LOAD_CHECKPOINT_H5 = config['CHECKPOINT']['enable_load_checkpoint_h5'].upper() == "TRUE"
+            self.LOAD_CHECKPOINT_H5_MODEL \
+                = config['CHECKPOINT']['load_checkpoint_h5_model'].replace('"', '').replace("'", '').replace(" ", '')
+            self.IMAGE_ENHANCE_FILE \
+                = config['CHECKPOINT']['image_enhance_file'].replace('"', '').replace("'", '').replace(" ", '').split(
+                ",")
+        except Exception as ex:
+            print("configure check fail, please check config file or create new config.")
+            print("%s key not found." % ex)
+            sys.exit()

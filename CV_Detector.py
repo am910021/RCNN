@@ -43,6 +43,8 @@ def detector(ss, net, config):
 
 if __name__ == '__main__':
     config = Config()
+    config.init_detector_config() #載入config detector設定
+
     cv_model_path = path.join(config.OPENCV.CONVERT_MODE_SAVE_PATH, config.CNN_MODEL_FILE) + '.pb'
     net = cv2.dnn.readNet(cv_model_path)
 

@@ -23,7 +23,7 @@ use_gpu_list = "/device:gpu:0,  /device:gpu:1"
 ;最大回合數(epoch)
 max_epochs = 10000
 batch_size = 16
-steps_per_epoch = 10
+steps_per_epoch = 20
 save_period = 1
 
 ;能夠容忍多少個回合(epoch)內都沒有收練(improvement)
@@ -34,20 +34,11 @@ learning_rate = 0.0001
 
 
 [DATASET]
-;快取檔案名稱
-dataset_images_cache_name = "train_images.cache"
-
-;快取檔案名稱
-dataset_labels_cache_name = "train_labels.cache"
-
 ;測式集大小 0~100
-test_dataset_size = 20
-
-;使用快取資料 true=載入快取資料集 false=重新載入資料集
-load_cache_dataset = true
+valid_dataset_size = 20
 
 ;資料集的原始圖片位置
-path = "dataset/Images"
+img_path = "dataset/Images"
 
 ;資料集的標記檔位置
 annot = "dataset/new_annot"
@@ -76,8 +67,16 @@ image_enhance_file = "rotation45, rotation90"
 
 
 [DETECTOR]
-input_path = "images"
+;要偵測的目標需在[DATASET]>annot_labels之下有列出
+detect_target = "plane"
+
+;要偵測的圖片路徑
+input_path = "Images"
+
+;偵測完輸出的路徑
 output_path = "out"
+
+;tensorflow下的線程數量
 workers = 10
 
 [OPENCV]
