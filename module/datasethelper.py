@@ -21,16 +21,16 @@ class DatasetHelper:
     def load_origin_data(self):
 
         # 分類列表
-        classification_list = self.config.ANNO_LABELS
+        classification_list = self.config.DATASET.ANNO_LABELS
         self.classification_len = len(classification_list)
 
         # 圖片列表
-        img_list = os.listdir(self.config.IMG_PATH)
+        img_list = os.listdir(self.config.DATASET.IMG_PATH)
         img_count = len(img_list)
 
         # 讀取圖片列表
         for index, img_name in enumerate(img_list):
-            img_path = os.path.join(self.config.IMG_PATH, img_name)  # 圖片路徑
+            img_path = os.path.join(self.config.DATASET.IMG_PATH, img_name)  # 圖片路徑
             image = cv2.imread(img_path)  # 讀取圖片
             csv_name = os.path.splitext(img_name)[0] + ".csv"  # csv檔名
             imout = image.copy()
@@ -45,7 +45,7 @@ class DatasetHelper:
                 c = [0] * self.classification_len
                 c[cli] = 1
                 # load csv file
-                csv_path = os.path.join(self.config.ANNOT, cl, csv_name)
+                csv_path = os.path.join(self.config.DATASET.ANNOT, cl, csv_name)
                 # print(csv_path)
                 if not os.path.exists(csv_path):
                     continue
@@ -72,7 +72,7 @@ class DatasetHelper:
         train_images, train_labels, valid_images, valid_labels = train_test_split(
             np.array(self.train_images),
             np.array(self.train_labels),
-            test_size=self.config.VALID_DATASET_SIZE / 100
+            test_size=self.config.DATASET.VALID_DATASET_SIZE
         )
 
         # 產生測式集資料
@@ -81,7 +81,7 @@ class DatasetHelper:
                                              originn_gen.flow(x=train_labels, y=valid_labels, batch_size=self.config.BATCH_SIZE))
 
         # 讀設所有「增強學習的程式」，並執行
-        for t in self.config.CHECKPOINT.IMAGE_ENHANCE_FILE:
+        for t in self.config.DATASET.IMAGE_ENHANCE_FILE:
             sys.stdout.write("\rCreating %s enhance image dataset." % t)
             sys.stdout.flush()
 

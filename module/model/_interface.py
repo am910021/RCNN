@@ -3,8 +3,8 @@ from module.config import Config
 
 
 class NetModelInterface:
-    def __init__(self, config:Config):
-        self.Config = config
+    def __init__(self, config: Config):
+        self.config = config
 
-    def createNewModel(self)  -> Functional:
+    def createNewModel(self) -> Functional:
         raise Exception('NotImplementedException')

@@ -5,6 +5,7 @@ from module.enhance._abstract import EnhanceAbstract
 
 class ImageEnhance(EnhanceAbstract):
 
+    #https://keras.io/api/preprocessing/image/
     def createEnhanceTrain(self, x_train, y_train):
         datagen_args = dict(rotation_range=22.5,  # 角度值，0~180，影象旋轉
                             width_shift_range=0.2,  # 水平平移，相對總寬度的比例

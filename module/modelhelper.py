@@ -32,7 +32,7 @@ class ModelHelper:
             devices = self.config.USE_GPU_LIST
         return devices
 
-    def __create_model(self, printSummary=False):
+    def __create_model(self, printSummary=True):
 
         sys.stdout.write("\rCreating model from %s ." % self.config.CNN_MODEL_FILE)
         sys.stdout.flush()

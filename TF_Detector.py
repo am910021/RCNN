@@ -16,6 +16,7 @@ from threading import Lock
 from tensorflow.python.keras.engine.functional import Functional
 from numpy import ndarray
 
+
 class Selective:
     def __init__(self, config: Config, file, ss):
         self.__img = cv2.imread(os.path.join(config.DETECTOR.INPUT_PATH, file))
@@ -42,7 +43,7 @@ class Selective:
         return ret
 
     def is_end(self) -> bool:
-        return self.__count >= len(self.__ssresults)-1
+        return self.__count >= len(self.__ssresults) - 1
 
     def write(self, x, y, w, h):
         self.__read_lock.acquire()
@@ -57,7 +58,7 @@ class Selective:
 
 
 class Thread(threading.Thread):
-    def __init__(self,config:Config,  model: Functional, selective: Selective):
+    def __init__(self, config: Config, model: Functional, selective: Selective):
         threading.Thread.__init__(self)
         self.selective = selective
         self.model = model
@@ -71,7 +72,7 @@ class Thread(threading.Thread):
             img = np.expand_dims(resized, axis=0)
             out = self.model.predict(img)
 
-            target = config.ANNO_LABELS.index(self.config.DETECTOR.DETECT_TARGET)
+            target = config.DATASET.ANNO_LABELS.index(self.config.DETECTOR.DETECT_TARGET)
             if out[0][target] > self.config.DETECTOR.REQUIRE_ACCURACY:
                 self.selective.write(x, y, w, h)
 
@@ -95,7 +96,7 @@ def detector(config: Config, model: Functional):
         thread = []
 
         for i in range(0, config.DETECTOR.WORKERS):
-            temp = Thread(model, selective)
+            temp = Thread(config, model, selective)
             temp.start()
             thread.append(temp)
 
@@ -109,7 +110,7 @@ def detector(config: Config, model: Functional):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     config = Config()
-    config.init_detector_config() #載入config detector設定
+    config.init_detector_config()  # 載入config detector設定
 
     if not os.path.exists(config.DETECTOR.OUTPUT_PATH):
         os.makedirs(config.DETECTOR.OUTPUT_PATH)

@@ -9,12 +9,11 @@ class NetModel(NetModelInterface):
         super().__init__(config)
 
     def createNewModel(self) -> Functional:
-
         self.model_final = tf.keras.applications.VGG19(
-            input_shape=(self.Config.IMG_WIDTH, self.Config.IMG_HEIGHT, self.Config.IMG_CHANNEL),
+            input_shape=(self.config.IMG_WIDTH, self.config.IMG_HEIGHT, self.config.IMG_CHANNEL),
             weights=None, include_top=True,
             classifier_activation="softmax",
-            classes=len(self.Config.ANNO_LABELS)
+            classes=len(self.config.DATASET.ANNO_LABELS)
         )
 
         return self.model_final

@@ -11,6 +11,7 @@ import shutil
 
 if __name__ == '__main__':
     config = Config()
+    config.init_detector_config()
     temp_path = path.join(config.OPENCV.CONVERT_MODE_SAVE_PATH, 'tmp', config.TIME)
     temp_file = path.join(config.OPENCV.CONVERT_MODE_SAVE_PATH, 'tmp', config.TIME, 'saved_model')
 

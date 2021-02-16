@@ -77,19 +77,13 @@ class Config:
             self.PATIENCE = int(config['GENERAL']['patience'])
             self.LEARNING_RATE = float(config['GENERAL']['learning_rate'])
 
-            self.VALID_DATASET_SIZE = int(config['DATASET']['valid_dataset_size'])
-            self.IMG_PATH = config['DATASET']['img_path'].replace('"', '').replace("'", '').replace(" ", '')
-            self.ANNOT = config['DATASET']['annot'].replace('"', '').replace("'", '').replace(" ", '')
-            self.ANNO_LABELS \
-                = config['DATASET']['annot_labels'].replace('"', '').replace("'", '').replace(" ", '').split(",")
-
             now = datetime.now()
             self.TIME_PATH = now.strftime("/%Y-%m-%d-%H-%M-%S/")
             self.TIME = now.strftime("%Y-%m-%d-%H-%M-%S")
 
             self.OPENCV = OPENCV(config)
             self.CHECKPOINT = CHECKPOINT(config)
-
+            self.DATASET = DATASET(self.__config_file)
 
         except Exception as ex:
             print("configure check fail, please check config file or create new config.")
@@ -101,18 +95,6 @@ class Config:
     def check_config_file(self):
         sys.stdout.write("\rConfig file Initializing.")
         sys.stdout.flush()
-
-        # 判斷是否有設定「增強學習的程式」
-        if len(self.CHECKPOINT.IMAGE_ENHANCE_FILE) == 0:
-            print("Please configure IMAGE_ENHANCE_FILE, then restart program.")
-            print("Process  terminated.")
-            sys.exit()
-
-        for file in self.CHECKPOINT.IMAGE_ENHANCE_FILE:
-            if not path.exists('module/enhance/' + file + '.py'):
-                print("Please check module/enhance/%s.py file exists or re-configure IMAGE_ENHANCE_FILE." % file)
-                print("Process  terminated.")
-                sys.exit()
 
         if not path.exists('module/model/' + self.CNN_MODEL_FILE + '.py'):
             print(
@@ -153,7 +135,8 @@ class DETECTOR:
             self.INPUT_PATH = config_file['DETECTOR']['input_path'].replace('"', '').replace("'", '').replace(" ", '')
             self.OUTPUT_PATH = config_file['DETECTOR']['output_path'].replace('"', '').replace("'", '').replace(" ", '')
             self.WORKERS = int(config_file['DETECTOR']['workers'].replace('"', '').replace("'", '').replace(" ", ''))
-            self.DETECT_TARGET = config_file['DETECTOR']['detect_target'].replace('"', '').replace("'", '').replace(" ", '')
+            self.DETECT_TARGET = config_file['DETECTOR']['detect_target'].replace('"', '').replace("'", '').replace(" ",
+                                                                                                                    '')
             self.REQUIRE_ACCURACY = float(config_file['DETECTOR']['require_accuracy'])
             self.FAST_SELECTIVE_SEARCH = config_file['DETECTOR']['fast_selective_search'].upper() == "TRUE"
 
@@ -168,7 +151,7 @@ class DETECTOR:
         sys.stdout.flush()
 
         # 判斷是否有設定「增強學習的程式」
-        if self.DETECT_TARGET not in self.config.ANNO_LABELS:
+        if self.DETECT_TARGET not in self.config.DATASET.ANNO_LABELS:
             sys.stdout.write("\rConfig [DETECTOR] check fail.")
             sys.stdout.flush()
             print()
@@ -190,8 +173,9 @@ class OPENCV:
                 " ", '')
         except Exception as ex:
             print("configure check fail, please check config file or create new config.")
-            print("%s key not found." % ex)
+            print("[OPENCV] %s key not found." % ex)
             sys.exit()
+
 
 class CHECKPOINT:
     def __init__(self, config: dict):
@@ -206,10 +190,60 @@ class CHECKPOINT:
             self.ENABLE_LOAD_CHECKPOINT_H5 = config['CHECKPOINT']['enable_load_checkpoint_h5'].upper() == "TRUE"
             self.LOAD_CHECKPOINT_H5_MODEL \
                 = config['CHECKPOINT']['load_checkpoint_h5_model'].replace('"', '').replace("'", '').replace(" ", '')
+        except Exception as ex:
+            print("configure check fail, please check config file or create new config.")
+            print("[CHECKPOINT] %s key not found." % ex)
+            sys.exit()
+
+
+class DATASET:
+    def __init__(self, config: dict):
+        try:
+            self.VALID_DATASET_SIZE = float(config['DATASET']['valid_dataset_size']) / 100
+            self.IMG_PATH = config['DATASET']['img_path'].replace('"', '').replace("'", '').replace(" ", '')
+            self.ANNOT = config['DATASET']['annot'].replace('"', '').replace("'", '').replace(" ", '')
+            self.ANNO_LABELS \
+                = config['DATASET']['annot_labels'].replace('"', '').replace("'", '').replace(" ", '').split(",")
+
             self.IMAGE_ENHANCE_FILE \
-                = config['CHECKPOINT']['image_enhance_file'].replace('"', '').replace("'", '').replace(" ", '').split(
+                = config['DATASET']['image_enhance_file'].replace('"', '').replace("'", '').replace(" ", '').split(
                 ",")
         except Exception as ex:
             print("configure check fail, please check config file or create new config.")
-            print("%s key not found." % ex)
+            print("[DATASET] %s key not found." % ex)
             sys.exit()
+
+        self.__check__()
+
+    def __check__(self):
+        # 判斷是否有設定「增強學習的程式」
+        if self.VALID_DATASET_SIZE < 0 or self.VALID_DATASET_SIZE > 1:
+            print("Please configure [DATASET] valid_dataset_size, then restart program.")
+            print("Process  terminated.")
+            sys.exit()
+
+        if self.IMG_PATH is "":
+            print("Please configure [DATASET] img_path, then restart program.")
+            print("Process  terminated.")
+            sys.exit()
+
+        if self.ANNOT is "":
+            print("Please configure [DATASET] annot, then restart program.")
+            print("Process  terminated.")
+            sys.exit()
+
+        if len(self.IMAGE_ENHANCE_FILE) == 0:
+            print("Please configure[DATASET] image_enhance_file, then restart program.")
+            print("Process  terminated.")
+            sys.exit()
+
+        for file in self.IMAGE_ENHANCE_FILE:
+            if not path.exists('module/enhance/' + file + '.py'):
+                print(
+                    "Please check module/enhance/%s.py file exists or re-configure [DATASET] image_enhance_file." % file)
+                print("Process  terminated.")
+                sys.exit()
+
+        sys.stdout.write("\rConfig [DATASET] check success.")
+        sys.stdout.flush()
+        print()
