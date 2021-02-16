@@ -10,10 +10,11 @@ class NetModel(NetModelInterface):
         super().__init__(config)
 
     def createNewModel(self) -> Functional:
-
         model = keras.Sequential(name="AlexNet")
 
-        model.add(keras.Input(shape=(self.config.IMG_WIDTH, self.config.IMG_HEIGHT, self.config.IMG_CHANNEL), name="input_1"))
+        # 輸入層請用 keras.Input 名稱為input_1，不然無法在純OpenCV下運作
+        model.add(
+            keras.Input(shape=(self.config.IMG_WIDTH, self.config.IMG_HEIGHT, self.config.IMG_CHANNEL), name="input_1"))
 
         model.add(layers.Conv2D(96, (11, 11), strides=(4, 4), padding='valid', activation='relu',
                                 kernel_initializer='uniform'))
