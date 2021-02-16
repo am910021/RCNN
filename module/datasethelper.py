@@ -37,7 +37,6 @@ class DatasetHelper:
 
             # 讀取類別
             for cli, cl in enumerate(classification_list):
-
                 sys.stdout.write("\rLoad Annotations file from %s, progress %d/%d                        " % (
                     csv_name, index + 1, img_count))
                 sys.stdout.flush()

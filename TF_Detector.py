@@ -20,7 +20,10 @@ class Selective:
     def __init__(self, config: Config, file, ss):
         self.__img = cv2.imread(os.path.join(config.DETECTOR.INPUT_PATH, file))
         ss.setBaseImage(self.__img)
-        ss.switchToSelectiveSearchFast()
+        if config.DETECTOR.FAST_SELECTIVE_SEARCH:
+            ss.switchToSelectiveSearchFast()
+        else:
+            ss.switchToSelectiveSearchQuality()
         self.__ssresults = ss.process()
         self.__imout = self.__img.copy()
         self.__count = 0
@@ -54,19 +57,22 @@ class Selective:
 
 
 class Thread(threading.Thread):
-    def __init__(self, model: Functional, selective: Selective):
+    def __init__(self,config:Config,  model: Functional, selective: Selective):
         threading.Thread.__init__(self)
         self.selective = selective
         self.model = model
+        self.config = config
 
     def run(self):
         while True:
             x, y, w, h = self.selective.get_selective()
             timage = self.selective.get_img()[y:y + h, x:x + w]
-            resized = cv2.resize(timage, (224, 224), interpolation=cv2.INTER_AREA)
+            resized = cv2.resize(timage, (self.config.IMG_WIDTH, self.config.IMG_HEIGHT), interpolation=cv2.INTER_AREA)
             img = np.expand_dims(resized, axis=0)
             out = self.model.predict(img)
-            if out[0][0] > 0.85:
+
+            target = config.ANNO_LABELS.index(self.config.DETECTOR.DETECT_TARGET)
+            if out[0][target] > self.config.DETECTOR.REQUIRE_ACCURACY:
                 self.selective.write(x, y, w, h)
 
             if self.selective.is_end():
@@ -98,13 +104,15 @@ def detector(config: Config, model: Functional):
 
         cv2.imwrite(path.join(config.DETECTOR.OUTPUT_PATH, file), selective.get_imout())
         print("\r%s Done." % file)
-        print()
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     config = Config()
     config.init_detector_config() #載入config detector設定
+
+    if not os.path.exists(config.DETECTOR.OUTPUT_PATH):
+        os.makedirs(config.DETECTOR.OUTPUT_PATH)
 
     model = ModelHelper(config)
     detector(config, model.get_model())

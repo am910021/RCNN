@@ -79,6 +79,12 @@ output_path = "out"
 ;tensorflow下的線程數量
 workers = 10
 
+;準確度多少以上才會輸出0~1
+require_accuracy = 0.85
+
+;快速物體偵測候選區域演算法 (候選區減少)
+fast_selective_search = false
+
 [OPENCV]
 ;啟用opencv優化
 enable_opencv_optimized = true

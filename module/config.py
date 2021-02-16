@@ -154,9 +154,12 @@ class DETECTOR:
             self.OUTPUT_PATH = config_file['DETECTOR']['output_path'].replace('"', '').replace("'", '').replace(" ", '')
             self.WORKERS = int(config_file['DETECTOR']['workers'].replace('"', '').replace("'", '').replace(" ", ''))
             self.DETECT_TARGET = config_file['DETECTOR']['detect_target'].replace('"', '').replace("'", '').replace(" ", '')
+            self.REQUIRE_ACCURACY = float(config_file['DETECTOR']['require_accuracy'])
+            self.FAST_SELECTIVE_SEARCH = config_file['DETECTOR']['fast_selective_search'].upper() == "TRUE"
+
         except Exception as ex:
             print("configure check fail, please check config file or create new config.")
-            print("%s key not found." % ex)
+            print("['DETECTOR'] %s key not found." % ex)
             sys.exit()
         self.__check__()
 
