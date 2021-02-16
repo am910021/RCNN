@@ -45,7 +45,7 @@ def detector(ss, net, config):
             sys.stdout.write("\rThe %s region processing progress is %d/%d." % (file, index+1, max_ss))
             sys.stdout.flush()
 
-        cv2.imwrite("out/" + file, imout)
+        cv2.imwrite(os.path.join(config.DETECTOR.OUTPUT_PATH, file), imout)
         print("\r%s Done.                                            " % file)
 
 
