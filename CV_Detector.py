@@ -37,8 +37,7 @@ def detector(ss, net, config):
             out = p.flatten()
             classId = np.argmax(out)
 
-            label_list = config.DATASET.ANNO_LABELS[::-1]
-            target = label_list.index(config.DETECTOR.DETECT_TARGET)
+            target = config.DATASET.ANNO_LABELS.index(config.DETECTOR.DETECT_TARGET)
             if out[target] >= config.DETECTOR.REQUIRE_ACCURACY:
                 cv2.rectangle(imout, (x, y), (x + w, y + h), (0, 255, 0), 1, cv2.LINE_AA)
 
